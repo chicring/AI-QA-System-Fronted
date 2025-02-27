@@ -7,7 +7,6 @@ import App from './App.vue'
 import router from './router'
 import PrimeVue from 'primevue/config';
 import Aura from '@primeuix/themes/aura';
-import { option } from '@primeuix/themes/aura/autocomplete'
 import ConfirmationService from 'primevue/confirmationservice';
 import DialogService from 'primevue/dialogservice';
 import ToastService from 'primevue/toastservice';

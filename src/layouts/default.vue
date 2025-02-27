@@ -1,7 +1,7 @@
 <template>
-    <div class="flex flex-col min-h-screen pl-2 pr-2 md:pr-0 md:pl-0 ">
+    <div class="flex flex-col min-h-screen pl-2 pr-2 md:pr-0 md:pl-0 gap-4 bg-s">
         <AppHeader />
-        <Divider type="dotted"  />
+    
         <div class="flex flex-col w-full mx-auto flex-1 max-w-7xl"> 
             <RouterView v-slot="{ Component }">
                 <keep-alive>
