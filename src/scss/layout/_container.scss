@@ -2,7 +2,8 @@ html {
   overflow-y: auto;
 }
 .v-main {
-  margin-right: 20px;
+  margin-right: 10px;
+  margin-left: 10px;
 }
 @media (max-width: 1279px) {
   .v-main {
@@ -12,17 +13,19 @@ html {
 .spacer {
   padding: 100px 0;
 }
-@media (max-width: 800px) {
-  .spacer {
-    padding: 40px 0;
-  }
-}
+// @media (max-width: 800px) {
+//   .spacer {
+//     padding: 40px 0;
+//   }
+// }
 
 .page-wrapper {
-  min-height: calc(100vh - 100px);
-  padding: 15px;
-  border-radius: $border-radius-root;
-  background: rgb(var(--v-theme-containerBg));
+  min-height: calc(100vh - 60px);
+  // padding: 15px;
+  // border-radius: $border-radius-root;
+  // background: rgb(var(--v-theme-containerBg));
+  /// 灰色
+  // background: rgb(var(--v-theme-background));
 }
 $sizes: (
   'display-1': 44px,

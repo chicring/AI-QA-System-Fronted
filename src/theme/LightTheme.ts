@@ -28,13 +28,14 @@ const PurpleTheme: ThemeTypes = {
     inputBorder: '#787878',
     containerBg: '#eef2f6',
     surface: '#fff',
+    // surfaceContent: '#f5f5f5',
     'on-surface-variant': '#fff',
     facebook: '#4267b2',
     twitter: '#1da1f2',
     linkedin: '#0e76a8',
     gray100: '#fafafa',
     primary200: '#90caf9',
-    secondary200: '#b39ddb'
+    secondary200: '#b39ddb',
   }
 };
 

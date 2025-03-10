@@ -8,7 +8,7 @@ const PublicRoutes = {
     {
       name: 'Authentication',
       path: '/login',
-      component: () => import('@/views/authentication/LoginPage.vue')
+      component: () => import('@/pages/auth/LoginPage.vue')
     },
     {
       name: 'Login',
@@ -18,7 +18,7 @@ const PublicRoutes = {
     {
       name: 'Register',
       path: '/register',
-      component: () => import('@/views/authentication/auth/RegisterPage.vue')
+      component: () => import('@/pages/auth/RegisterPage.vue')
     },
     {
       name: 'Error 404',

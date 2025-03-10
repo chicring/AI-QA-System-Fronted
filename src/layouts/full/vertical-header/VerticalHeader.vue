@@ -1,24 +1,42 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { useCustomizerStore } from '../../../stores/customizer';
+import { useNavigationMenu } from '@/composables/useNavigationMenu';
 // Icon Imports
 import { BellIcon, SettingsIcon, SearchIcon, Menu2Icon } from 'vue-tabler-icons';
+import Logo from '../logo/LogoMain.vue';
+import { useUserStore } from '@/stores/user';
+import { useDisplay } from 'vuetify'
 
 // dropdown imports
 import NotificationDD from './NotificationDD.vue';
 import ProfileDD from './ProfileDD.vue';
-import Searchbar from './SearchBarPanel.vue';
 
-const customizer = useCustomizerStore();
+
 const showSearch = ref(false);
-function searchbox() {
-  showSearch.value = !showSearch.value;
-}
+
+const { mdAndUp } = useDisplay();
+const { navigationMenu } = useNavigationMenu();
+const userStore = useUserStore();
+
+userStore.fetchUserInfo();
 </script>
 
 <template>
-  <v-app-bar elevation="0" height="80">
-    <v-btn
+  <v-app-bar elevation="0" height="60">
+    <Logo class="ml-4" />
+
+    <div  v-if="mdAndUp" class="d-flex ga-2 ml-4">
+      <v-btn variant="text"
+        v-for="item in navigationMenu"
+        :key="item.label"
+        :to="item.route"
+        exact
+        class="text-h4"
+      >
+        {{ item.label }}
+      </v-btn>
+    </div>
+    <!-- <v-btn
       class="hidden-md-and-down text-secondary"
       color="lightsecondary"
       icon
@@ -39,10 +57,10 @@ function searchbox() {
       size="small"
     >
       <Menu2Icon size="20" stroke-width="1.5" />
-    </v-btn>
+    </v-btn> -->
 
     <!-- search mobile -->
-    <v-btn
+    <!-- <v-btn
       class="hidden-lg-and-up text-secondary ml-3"
       color="lightsecondary"
       icon
@@ -56,14 +74,14 @@ function searchbox() {
 
     <v-sheet v-if="showSearch" class="search-sheet v-col-12">
       <Searchbar :closesearch="searchbox" />
-    </v-sheet>
+    </v-sheet> -->
 
     <!-- ---------------------------------------------- -->
     <!-- Search part -->
     <!-- ---------------------------------------------- -->
-    <v-sheet class="mx-3 v-col-3 v-col-xl-2 v-col-lg-4 d-none d-lg-block">
+    <!-- <v-sheet class="mx-3 v-col-3 v-col-xl-2 v-col-lg-4 d-none d-lg-block">
       <Searchbar />
-    </v-sheet>
+    </v-sheet> -->
 
     <!---/Search part -->
 
@@ -92,8 +110,8 @@ function searchbox() {
     <v-menu :close-on-content-click="false">
       <template v-slot:activator="{ props }">
         <v-btn class="profileBtn text-primary" color="lightprimary" variant="flat" rounded="pill" v-bind="props">
-          <v-avatar size="30" class="mr-2 py-2">
-            <img src="@/assets/images/profile/user-round.svg" alt="Julia" />
+          <v-avatar class="mr-2 py-2" :image="userStore.user?.userInfo?.avatar!">
+            <img style="width: 36px; height: 36px; border-radius: 50%;" :src="userStore.user?.userInfo?.avatar!" />
           </v-avatar>
           <SettingsIcon stroke-width="1.5" />
         </v-btn>
