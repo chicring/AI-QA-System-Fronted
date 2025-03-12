@@ -3,7 +3,9 @@ import { ref } from 'vue';
 import { useAuthStore } from '@/stores/auth';
 import { useUserStore } from '@/stores/user';
 import { Form } from 'vee-validate';
+import {useToast} from 'vue-toast-notification';
 
+const toast = useToast();
 const valid = ref(false);
 const show1 = ref(false);
 const logform = ref();
@@ -25,6 +27,7 @@ function validate(values: any, { setErrors }: any) {
     password: password.value
   })
   .then(() => {
+    toast.success('登录成功', {position:'top'});
     const userStore = useUserStore();
     userStore.fetchUserInfo();
     window.location.href = '/';

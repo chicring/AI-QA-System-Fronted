@@ -8,7 +8,7 @@ import { getNotificationList,markAllRead } from '@/api/user'
 const request = ref<QueryNotificationVO>({
   pageNum: 1,
   pageSize: 50,
-  status: notificationStatusList[0].value,
+  status: notificationStatusList[0].status,
   type: null,
 })
 
@@ -46,14 +46,14 @@ onMounted(() => {
     <div class="d-flex align-center justify-space-between mb-3">
       <h6 class="text-subtitle-1">
         通知
-        <v-chip color="warning" variant="flat" size="small" class="ml-2 text-white">01</v-chip>
+        <v-chip v-if="reposne.total > 0" color="warning" variant="flat" size="small" class="ml-2 text-white">{{ reposne.total }}</v-chip>
       </h6>
       <a href="#" class="text-decoration-underline text-primary text-subtitle-2">全部标记为已读</a>
     </div>
     <v-select :items="notificationStatusList" v-model="request.status" 
               color="primary" 
               variant="outlined" 
-              density="comfortable" 
+              density="compact" 
               hide-details
               item-title="description"
               item-value="status"
@@ -64,15 +64,15 @@ onMounted(() => {
   </div>
   <v-divider></v-divider>
   <perfect-scrollbar style="max-height: 650px">
-    <v-list class="py-0" lines="three">
+    <v-list v-if="reposne.total > 0" class="py-0" lines="three" v-for="item in reposne.list" :key="item.id">
       <v-list-item value="" color="secondary" class="no-spacer">
 
         <div class="d-inline-flex align-center justify-space-between w-100">
-          <h6 class="text-subtitle-1 font-weight-regular">John Deo</h6>
-          <span class="text-subtitle-2 text-medium-emphasis">2 mins ago</span>
+          <h6 class="text-subtitle-1 font-weight-regular">{{ item.title }}</h6>
+          <span class="text-subtitle-2 text-medium-emphasis">{{ item.createTime }}</span>
         </div>
 
-        <p class="text-subtitle-2 text-medium-emphasis mt-1">It is a long established fact that a reader will be distracted</p>
+        <p class="text-subtitle-2 text-medium-emphasis mt-1">{{ item.content }}</p>
         <div class="mt-3">
           <v-chip size="small" text="Unread" color="error" variant="tonal" class="mr-2" />
           <v-chip size="small" text="New" color="warning" variant="tonal" />
@@ -80,6 +80,12 @@ onMounted(() => {
       </v-list-item>
       <v-divider></v-divider>
     </v-list>
+
+    <div v-else class="bg-lightprimary rounded-md px-5 py-3 my-3 mx-4">
+       
+      <span class="text-subtitle-1 text-medium-emphasis">暂无通知</span>
+
+    </div>
   </perfect-scrollbar>
 
 

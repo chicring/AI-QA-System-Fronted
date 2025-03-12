@@ -9,6 +9,10 @@ import { PerfectScrollbarPlugin } from 'vue3-perfect-scrollbar';
 import VueApexCharts from 'vue3-apexcharts';
 import VueTablerIcons from 'vue-tabler-icons';
 import VuetifyUseDialog from 'vuetify-use-dialog'
+import ToastPlugin from 'vue-toast-notification';
+
+// 样式
+import 'vue-toast-notification/dist/theme-bootstrap.css';
 
 // print
 import print from 'vue3-print-nb';
@@ -22,4 +26,6 @@ app.use(VueTablerIcons);
 app.use(print);
 app.use(VueApexCharts);
 app.use(vuetify);
-app.use(VuetifyUseDialog).mount('#app');
+app.use(VuetifyUseDialog)
+app.use(ToastPlugin);
+app.mount('#app');

@@ -11,7 +11,6 @@ const route = useRoute();
 </script>
 
 <template>
-  <v-locale-provider>
     <v-app
       theme="PurpleTheme"
     >
@@ -28,5 +27,4 @@ const route = useRoute();
         </div>
       </v-main>
     </v-app>
-  </v-locale-provider>
 </template>

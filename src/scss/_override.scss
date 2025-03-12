@@ -62,3 +62,18 @@ html {
     }
   }
 }
+
+
+// 修改 toast 样式
+.v-toast__item {
+  border-radius: 12px  !important; /* Increased from .25em to 8px for more rounded corners */
+}
+
+/* Override padding */
+.v-toast {
+  padding: 1.0em  !important; /* Reduced from 2em */
+}
+
+.v-toast__text {
+  padding: 0.75em 1.0em  !important; /* Adjusted from .5em 1em */
+}

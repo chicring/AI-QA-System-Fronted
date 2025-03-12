@@ -24,7 +24,7 @@ const emailRules = ref([(v: string) => !!v || '邮箱不能为空', (v: string) 
 
 async function validate() {
   
-  await register(registerRequest.value);
+  await register(registerRequest.value)
 }
 </script>
 

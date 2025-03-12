@@ -115,7 +115,9 @@ import { IconPencil } from '@tabler/icons-vue';
 import type { UpdateUserInfoRequest } from '@/api/types/user';
 import { useUserStore } from '@/stores/user';
 import { updateUserInfo } from '@/api/user';
+import { useToast } from 'vue-toast-notification';
 
+const toast = useToast();
 const userStore = useUserStore();
 
 const sexList = ref([
@@ -168,8 +170,10 @@ function submit() {
     updateUserInfo(request.value).then((res) => {
         userStore.fetchUserInfo();
         options.value.showDialog = false;
+        toast.success('修改成功', { position: 'top' });
+    }).catch((err) => {
+        toast.error('修改失败', { position: 'top' });
     });
-    console.log(request.value);
 }
 
 onMounted(() => {

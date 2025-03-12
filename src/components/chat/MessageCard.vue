@@ -8,7 +8,8 @@
             <v-btn flat rounded="md" size="x-small" icon 
                  :class="[
                    isHovering ? 'opacity-60' : 'opacity-0'
-                 ]">
+                 ]" 
+                 @click="copyText(message.content)">
                  <IconCopy size="20" />
               </v-btn>
           </div>
@@ -32,7 +33,8 @@
             <v-btn flat rounded="md" size="x-small" icon 
                  :class="[
                    isHovering ? 'opacity-60' : 'opacity-0'
-                 ]">
+                 ]"
+                 @click="copyText(message.content)">
                  <IconCopy size="20" />
                </v-btn>
            </div>
@@ -49,11 +51,22 @@
 import type { Message } from '@/types/chats/chat';
 import { IconCopy } from '@tabler/icons-vue';
 import MarkdownViewer from '@/components/doc/MarkdownViewer.vue';
+import { useToast } from 'vue-toast-notification';
+import copy from 'copy-to-clipboard';
+
+const toast = useToast();
 
 const props = defineProps<{
   message: Message;
 }>();
 
+const copyText = (text: string) => {
+  if (copy(text)) {
+    toast.success('复制成功', { position: 'top' });
+  } else {
+    toast.error('复制失败', { position: 'top' });
+  }
+}
 </script>
 
 <style scoped>
