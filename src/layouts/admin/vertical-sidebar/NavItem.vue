@@ -1,5 +1,5 @@
 <script setup>
-import Icon from '../IconSet.vue';
+import Icon from './IconSet.vue';
 
 const props = defineProps({ item: Object, level: Number });
 </script>
@@ -10,6 +10,7 @@ const props = defineProps({ item: Object, level: Number });
     :to="item.type === 'external' ? '' : item.to"
     :href="item.type === 'external' ? item.to : ''"
     rounded
+    exact
     class="mb-1"
     color="secondary"
     :disabled="item.disabled"
@@ -19,7 +20,7 @@ const props = defineProps({ item: Object, level: Number });
     <template v-slot:prepend>
       <Icon :item="props.item.icon" :level="props.level" />
     </template>
-    <v-list-item-title>{{ item.title }}</v-list-item-title>
+    <v-list-item-title class="font-weight-bold" style="font-size: 14px;">{{ item.title }}</v-list-item-title>
     <!---If Caption-->
     <v-list-item-subtitle v-if="item.subCaption" class="text-caption mt-n1 hide-menu">
       {{ item.subCaption }}

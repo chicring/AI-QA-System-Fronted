@@ -1,109 +1,42 @@
+import type { Component } from 'vue';
 import {
-  CircleIcon,
-  WindmillIcon,
-  TypographyIcon,
-  ShadowIcon,
-  PaletteIcon,
-  KeyIcon,
-  BugIcon,
-  DashboardIcon,
-  BrandChromeIcon,
-  HelpIcon
-} from 'vue-tabler-icons';
+  IconDashboard,
+  IconHttpQue,
+  IconUsersPlus,
+  IconLogs
 
-export interface menu {
-  header?: string;
-  title?: string;
-  icon?: object;
+} from '@tabler/icons-vue';
+
+
+interface MenuItem {
+  title: string;
+  icon?: Component;
   to?: string;
+  children?: MenuItem[];
+  header?: boolean;
   divider?: boolean;
-  chip?: string;
-  chipColor?: string;
-  chipVariant?: string;
-  chipIcon?: string;
-  children?: menu[];
-  disabled?: boolean;
-  type?: string;
-  subCaption?: string;
 }
 
-const sidebarItem: menu[] = [
-  { header: 'Dashboard' },
+const sidebarItem: MenuItem[] = [
   {
-    title: 'Default',
-    icon: DashboardIcon,
-    to: '/dashboard/default'
-  },
-  { divider: true },
-  { header: 'Pages' },
-  {
-    title: 'Authentication',
-    icon: KeyIcon,
-    to: '/auth',
-    children: [
-      {
-        title: 'Login',
-        icon: CircleIcon,
-        to: '/login1'
-      },
-      {
-        title: 'Register',
-        icon: CircleIcon,
-        to: '/register'
-      }
-    ]
+    title: '控制台',
+    icon: IconDashboard,
+    to: '/admin'
   },
   {
-    title: 'Error 404',
-    icon: BugIcon,
-    to: '/error'
-  },
-  { divider: true },
-  { header: 'Utilities' },
-  {
-    title: 'Typography',
-    icon: TypographyIcon,
-    to: '/utils/typography'
+    title: '题库管理',
+    icon: IconHttpQue,
+    to: '/admin/question-bank'
   },
   {
-    title: 'Shadows',
-    icon: ShadowIcon,
-    to: '/utils/shadows'
+    title: '用户管理',
+    icon: IconUsersPlus,
+    to: '/admin/users'
   },
   {
-    title: 'Colors',
-    icon: PaletteIcon,
-    to: '/utils/colors'
-  },
-
-  {
-    title: 'Icons',
-    icon: WindmillIcon,
-    to: '/forms/radio',
-    children: [
-      {
-        title: 'Tabler Icons',
-        icon: CircleIcon,
-        to: '/icons/tabler'
-      },
-      {
-        title: 'Material Icons',
-        icon: CircleIcon,
-        to: '/icons/material'
-      }
-    ]
-  },
-  { divider: true },
-  {
-    title: 'Sample Page',
-    icon: BrandChromeIcon,
-    to: '/starter'
-  },
-  {
-    title: 'Documentation',
-    icon: HelpIcon,
-    to: 'https://codedthemes.gitbook.io/berry-vuetify/',
-    type: 'external'
+    title: '系统日志',
+    icon: IconLogs,
+    to: '/admin/logs'
   }
 ];
 

@@ -27,6 +27,13 @@ html {
   /// 灰色
   // background: rgb(var(--v-theme-background));
 }
+
+.page-wrapper-admin {
+  min-height: calc(100vh - 60px);
+  border-radius: $border-radius-root;
+  background: rgb(var(--v-theme-containerBg));
+}
+
 $sizes: (
   'display-1': 44px,
   'display-2': 40px,

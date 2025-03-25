@@ -19,9 +19,6 @@ export const useCustomizerStore = defineStore({
     SET_MINI_SIDEBAR(payload: boolean) {
       this.mini_sidebar = payload;
     },
-    SET_CUSTOMIZER_DRAWER(payload: boolean) {
-      this.Customizer_drawer = payload;
-    },
     SET_FONT(payload: string) {
       this.fontTheme = payload;
     }
