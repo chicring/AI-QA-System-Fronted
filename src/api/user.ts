@@ -9,11 +9,10 @@ import type {
     UserInfoResponse,
     UserRegisterRequest,
     UpdateUserInfoRequest,
-    NotificationListResponse,
-    QueryNotificationVO,
+    UserPageQueryVO,
+    UserPageResponse,
+    UserStatusToggleRequest
 } from "./types/user"
-
-
 
 export function loginByUsername(data: UserLoginRequest): Promise<ApiResponse<UserLoginResponse>> {
     return request.post('/v1/account/login', data)
@@ -31,21 +30,24 @@ export function updateUserInfo(data : UpdateUserInfoRequest): Promise<ApiRespons
     return request.put('/v1/account', data)
 }
 
-
-// 查询通知列表
-export function getNotificationList(params: QueryNotificationVO): Promise<ApiResponse<NotificationListResponse>> {
-    return request.get('/v1/notice/list', {
-        params: params
+/**
+ * 获取用户列表（分页）
+ * @param params 查询参数
+ */
+export function getUserList(params: UserPageQueryVO): Promise<ApiResponse<UserPageResponse>> {
+    return request.get('/user/admin/page', {
+        params: {
+            page: params.page,
+            size: params.size,
+            username: params.username
+        }
     })
 }
 
-// 删除通知
-export function deleteNotification(id: number): Promise<ApiResponse<null>> {
-    return request.delete(`/v1/notice/${id}`)
-}
-
-
-// 标记全部已读
-export function markAllRead(): Promise<ApiResponse<null>> {
-    return request.put('/v1/notice/mark-all-read')
+/**
+ * 切换用户状态
+ * @param data 状态切换请求
+ */
+export function toggleUserStatus(data: UserStatusToggleRequest): Promise<ApiResponse<null>> {
+    return request.put('/user/admin/status', data)
 }

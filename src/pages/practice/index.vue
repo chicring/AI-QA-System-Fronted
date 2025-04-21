@@ -8,15 +8,19 @@ const { mdAndUp } = useDisplay()
 import { useChatStore } from '@/stores/chat'
 import type { ChatRequest } from '@/api/types/chat'
 import type { PerfectScrollbarExpose } from 'vue3-perfect-scrollbar';
+import InterviewerSelect from './components/InterviewerSelect.vue'
+import UploadButton from './components/UploadButton.vue'
 
 const chatStore = useChatStore()
-
 
 const chatRequest = ref<ChatRequest>({
   message: '',
   conversationId: '',
-  files: ''
+  files: '',
+  interviewer: 'zhangsan'
 })
+
+const uploadFiles = ref<string[]>([])
 
 const options = ref({
   showArrow: false,
@@ -28,11 +32,24 @@ const sendMessage = async () => {
   if (chatRequest.value.message.trim() === "" || chatStore.chat.isReplying) {
     return;
   }
+  // 打印chatRequest.value
+  console.log(chatRequest.value)
   await chatStore.sendMessage(chatRequest.value).then(() => {
     chatRequest.value.message = ''
   })
   moveToBottom()
 }
+
+const handleUploadSuccess = (fileName: string) => {
+  uploadFiles.value.push(fileName)
+  chatRequest.value.files = uploadFiles.value.join(',')
+}
+
+const handleDeleteFile = (fileName: string) => {
+  uploadFiles.value = uploadFiles.value.filter(file => file !== fileName)
+  chatRequest.value.files = uploadFiles.value.join(',')
+}
+
 
 const scrollbarApi = ref<PerfectScrollbarExpose | null>(null);
 const moveToBottom = () => {
@@ -93,6 +110,11 @@ onMounted(() => {
         <v-btn class="floating-button" rounded="md" color="primary" v-if="options.showArrow" @click.stop="moveToBottom" variant="flat" icon="true"> 
           <IconChevronsDown/>
         </v-btn>
+        <div class="upload-files">
+          <v-chip class="mr-2" v-for="file in uploadFiles" rounded="md" closable variant="flat" @click:close="handleDeleteFile(file)" color="primary">
+            {{ file.slice(0, 10) }}
+          </v-chip>
+        </div>
 
         <v-textarea
             placeholder="enter发送 shift+enter换行"
@@ -116,18 +138,13 @@ onMounted(() => {
 
         <div class="d-flex justify-space-between">
           <div>
-            <v-btn flat rounded="md" color="containerBg">
-              <p class="text-medium-emphasis">glm-4-32k</p>
-            </v-btn>
+            <InterviewerSelect v-model:value="chatRequest.interviewer" />
           </div>
 
 
-          <div>
-            <v-btn flat rounded="md" size="small" icon class="mr-2" color="containerBg">  
-              <IconPaperclip size="26" />
-            </v-btn>
+          <div class="d-flex ">
+            <UploadButton :conversation-id="chatStore.chat.conversationId" @upload:success="handleUploadSuccess"/>
    
-
             <v-btn key="send-message" v-if="!chatStore.chat.isReplying" color="primary" flat rounded="md" size="small" icon @click="sendMessage">
               <IconArrowUp size="26" />
             </v-btn>
@@ -177,6 +194,12 @@ onMounted(() => {
   position: fixed;
   right: 23%;
   bottom: 150px;
+  z-index: 1;
+}
+
+.upload-files {
+  position: fixed;
+  bottom: 135px;
   z-index: 1;
 }
 

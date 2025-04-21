@@ -1,4 +1,3 @@
-
 interface UserLoginRequest {
     username: string;
     password: string;
@@ -37,28 +36,48 @@ interface UpdateUserInfoRequest  {
     avatar: string | null;
 }
 
-// NotificationDTO
-
-// NotificationItem
-interface NotificationItem {
-    id: number;
-    title: string;
-    content: string;
-    type: number;
-    status: number;
-    createTime: Date;
+// 用户信息
+export interface UserItem {
+  username: string;
+  nickname: string;
+  email: string;
+  mobile: string;
+  sex: number;
+  avatar: string;
+  role: string;
+  status: string;
+  loginIp: string;
+  used_quota: number;
+  requestCount: number;
 }
 
-interface NotificationListResponse  {
-    pageNum: number;
-    pageSize: number;
-    total: number;
-    data: NotificationItem[];
+// 用户分页查询参数
+export interface UserPageQueryVO {
+  page: number;
+  size: number;
+  username?: string;
 }
-interface QueryNotificationVO {
-    pageNum: number;
-    pageSize: number;
-    status: number | null;
-    type: number | null;
+
+// 用户分页响应
+export interface UserPageResponse {
+  pageNum: number;
+  pageSize: number;
+  total: number;
+  data: UserItem[];
 }
-export type { UserLoginRequest, UserLoginResponse, UserInfoResponse, UserRegisterRequest, UpdateUserInfoRequest, NotificationItem, NotificationListResponse, QueryNotificationVO };
+
+// API 响应
+export interface ApiResponse<T> {
+  code: number;
+  msg: string;
+  requestId: string;
+  data: T;
+}
+
+// 用户状态切换请求
+export interface UserStatusToggleRequest {
+  username: string;
+  status: string;
+}
+
+export type { UserLoginRequest, UserLoginResponse, UserInfoResponse, UserRegisterRequest, UpdateUserInfoRequest };

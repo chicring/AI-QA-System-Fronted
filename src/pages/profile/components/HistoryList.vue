@@ -121,7 +121,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getQueryHistory } from '@/api/question';
+import { getQueryHistory } from '@/api';
 import type { QueryHistoryRequest, QueryHistoryResponse } from '@/api/types/index';
 import { historyStatusItems, difficultyItems } from '@/types/question';
 import { IconReload, IconEye,IconSearch } from '@tabler/icons-vue';

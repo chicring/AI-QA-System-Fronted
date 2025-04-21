@@ -1,6 +1,7 @@
 <script setup lang="ts">
 const props = defineProps<{
-  item: Object
+  item: any,
+  level?: number
 }>()
 </script>
 

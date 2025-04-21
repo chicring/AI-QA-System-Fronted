@@ -25,7 +25,7 @@ import { useRoute } from 'vue-router';
 import QuestionList from './components/QuestionList.vue';
 import type { CategoryItem } from '@/api/types/index';
 import { ref, onMounted } from 'vue';
-import { getCategoryDetail } from '@/api/question';
+import { getCategoryDetail } from '@/api';
 
 const route = useRoute();
 const id = route.params.id;

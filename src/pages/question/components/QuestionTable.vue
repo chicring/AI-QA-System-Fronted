@@ -114,7 +114,7 @@
 <script setup lang="ts">
 import { ref,onMounted } from 'vue';
 import { IconSettings, IconSearch, IconReload,IconFlame  } from '@tabler/icons-vue';
-import { getQuestionList,getTagListGroup } from '@/api/question'; 
+import { getQuestionList, getTagListGroup } from '@/api'; 
 import type { QuestionListQueryParams, QuestionListResponse, QuestionItem, TagGroup } from '@/api/types/index';
 import { difficultyList } from '@/types/question/DifficultyType';
 import TagSelect from '@/components/question/TagSelect.vue';
@@ -159,9 +159,13 @@ const handleTagClick = (tag: string) => {
     fetchQuestions();
 };
 
-const fetchQuestions = async () => {
+const fetchQuestions = async (options?: any) => {
   loading.value = true
   try {
+    if (options) {
+      params.value.pageNum = options.page
+      params.value.pageSize = options.itemsPerPage
+    }
     const res = await getQuestionList(params.value);
     questionList.value = res.data;
   } catch (error) {

@@ -1,0 +1,1979 @@
+openapi: "3.0.1"
+info:
+  title: "API Documentation"
+  version: "1.0"
+paths:
+  /v1/chat/stream:
+    post:
+      summary: "chatWithQuestion"
+      description: "chatWithQuestion"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                message:
+                  type: "string"
+                  description: ""
+                conversationId:
+                  type: "string"
+                  description: ""
+                files:
+                  type: "string"
+                  description: "附加文件名，可以通过上传接口拿到"
+                interviewer:
+                  type: "string"
+                  description: "面试官 根据这个字段来区分不同的面试官"
+              description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  type: "object"
+                  properties:
+                    id:
+                      type: "string"
+                      description: ""
+                    content:
+                      type: "string"
+                      description: ""
+                    finishReason:
+                      type: "string"
+                      description: "STOP - 停止"
+  /v1/chat/upload:
+    post:
+      summary: "handleUpload"
+      description: "handleUpload"
+      parameters:
+      - name: "conversationId"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "string"
+          nullable: false
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+              - "file"
+              type: "object"
+              properties:
+                file:
+                  type: "string"
+                  description: ""
+                  format: "binary"
+        required: true
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+  /v1/tag:
+    post:
+      summary: "saveOrUpdateTag"
+      description: "saveOrUpdateTag"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                  description: ""
+                  format: "int64"
+                tagName:
+                  type: "string"
+                  description: ""
+                categoryId:
+                  type: "string"
+                  description: ""
+              description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+  /v1/tag/{id}:
+    delete:
+      summary: "deleteTag"
+      description: "deleteTag"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+  /v1/tag/list:
+    get:
+      summary: "分页查询标签"
+      description: "分页查询标签"
+      parameters:
+      - name: "pageNum"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 1
+      - name: "pageSize"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 10
+      - name: "q"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "string"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      records:
+                        type: "array"
+                        description: "当前页数据。"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                            tagName:
+                              type: "string"
+                              description: ""
+                            categoryId:
+                              type: "string"
+                              description: ""
+                            categoryName:
+                              type: "string"
+                              description: ""
+                          description: ""
+                        default: "Collections.emptyList()"
+                      pageNumber:
+                        type: "integer"
+                        description: "当前页码。"
+                        format: "int64"
+                        default: 1
+                      pageSize:
+                        type: "integer"
+                        description: "每页数据数量。"
+                        format: "int64"
+                      maxPageSize:
+                        type: "integer"
+                        description: "每页数据数量最大限制。"
+                        format: "int64"
+                      totalPage:
+                        type: "integer"
+                        description: "总页数。"
+                        format: "int64"
+                        default: -1
+                      totalRow:
+                        type: "integer"
+                        description: "总数据数量。"
+                        format: "int64"
+                        default: -1
+                      optimizeCountQuery:
+                        type: "boolean"
+                        description: "是否优化分页查询 COUNT 语句。"
+                        default: "true"
+                    description: ""
+  /v1/category:
+    post:
+      summary: "addCategory"
+      description: "addCategory"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                  description: ""
+                  format: "int64"
+                categoryName:
+                  type: "string"
+                  description: ""
+                description:
+                  type: "string"
+                  description: ""
+                categoryLevel:
+                  type: "integer"
+                  description: ""
+                sortNum:
+                  type: "integer"
+                  description: ""
+                imageUrl:
+                  type: "string"
+                  description: ""
+              description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+  /v1/category/{id}:
+    get:
+      summary: "getCategory"
+      description: "getCategory"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      id:
+                        type: "integer"
+                        description: ""
+                        format: "int64"
+                      categoryName:
+                        type: "string"
+                        description: ""
+                      description:
+                        type: "string"
+                        description: ""
+                      categoryLevel:
+                        type: "integer"
+                        description: ""
+                      sortNum:
+                        type: "integer"
+                        description: ""
+                      imageUrl:
+                        type: "string"
+                        description: ""
+                    description: ""
+  /v1/category/list:
+    get:
+      summary: "getCategoryList"
+      description: "getCategoryList"
+      parameters:
+      - name: "pageNum"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 1
+      - name: "pageSize"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 10
+      - name: "q"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "string"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      records:
+                        type: "array"
+                        description: "当前页数据。"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                            categoryName:
+                              type: "string"
+                              description: ""
+                            description:
+                              type: "string"
+                              description: ""
+                            categoryLevel:
+                              type: "integer"
+                              description: ""
+                            sortNum:
+                              type: "integer"
+                              description: ""
+                            imageUrl:
+                              type: "string"
+                              description: ""
+                          description: ""
+                        default: "Collections.emptyList()"
+                      pageNumber:
+                        type: "integer"
+                        description: "当前页码。"
+                        format: "int64"
+                        default: 1
+                      pageSize:
+                        type: "integer"
+                        description: "每页数据数量。"
+                        format: "int64"
+                      maxPageSize:
+                        type: "integer"
+                        description: "每页数据数量最大限制。"
+                        format: "int64"
+                      totalPage:
+                        type: "integer"
+                        description: "总页数。"
+                        format: "int64"
+                        default: -1
+                      totalRow:
+                        type: "integer"
+                        description: "总数据数量。"
+                        format: "int64"
+                        default: -1
+                      optimizeCountQuery:
+                        type: "boolean"
+                        description: "是否优化分页查询 COUNT 语句。"
+                        default: "true"
+                    description: ""
+  /v1/question:
+    post:
+      summary: "保存或者更新问题"
+      description: "保存或者更新问题"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                  description: ""
+                  format: "int64"
+                questionTitle:
+                  type: "string"
+                  description: ""
+                questionTips:
+                  type: "string"
+                  description: ""
+                difficulty:
+                  type: "integer"
+                  description: ""
+                answer:
+                  type: "string"
+                  description: ""
+                categoryName:
+                  type: "string"
+                  description: ""
+                tagNames:
+                  type: "array"
+                  description: ""
+                  items:
+                    type: "string"
+              description: "问题"
+      responses:
+        "200":
+          description: "保存后的问题"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+                description: "保存后的问题"
+  /v1/question/{questionId}:
+    delete:
+      summary: "根据问题id删除问题"
+      description: "根据问题id删除问题"
+      parameters:
+      - name: "questionId"
+        in: "path"
+        description: "问题id"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "删除结果"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+                description: "删除结果"
+  /v1/question/list-question:
+    post:
+      summary: "获取问题分页列表"
+      description: "获取问题分页列表"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                pageNum:
+                  type: "integer"
+                  description: ""
+                  default: 1
+                pageSize:
+                  type: "integer"
+                  description: ""
+                  default: 10
+                categoryId:
+                  type: "integer"
+                  description: ""
+                  format: "int64"
+                categoryName:
+                  type: "string"
+                  description: ""
+                title:
+                  type: "string"
+                  description: ""
+                difficulty:
+                  type: "integer"
+                  description: ""
+                tagNames:
+                  type: "array"
+                  description: ""
+                  items:
+                    type: "string"
+              description: "问题查询条件"
+      responses:
+        "200":
+          description: "问题列表"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      records:
+                        type: "array"
+                        description: "当前页数据。"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                            questionTitle:
+                              type: "string"
+                              description: ""
+                            questionTips:
+                              type: "string"
+                              description: ""
+                            difficulty:
+                              type: "integer"
+                              description: ""
+                            answer:
+                              type: "string"
+                              description: ""
+                            categoryName:
+                              type: "string"
+                              description: ""
+                            tagNames:
+                              type: "array"
+                              description: ""
+                              items:
+                                type: "string"
+                            viewCount:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                            createTime:
+                              type: "object"
+                              properties:
+                                seconds:
+                                  type: "integer"
+                                  description: "The number of seconds from the epoch\
+                                    \ of 1970-01-01T00:00:00Z."
+                                  format: "int64"
+                                nanos:
+                                  type: "integer"
+                                  description: "The number of nanoseconds, later along\
+                                    \ the time-line, from the seconds field.\nThis\
+                                    \ is always positive, and never exceeds 999,999,999."
+                              description: ""
+                          description: ""
+                        default: "Collections.emptyList()"
+                      pageNumber:
+                        type: "integer"
+                        description: "当前页码。"
+                        format: "int64"
+                        default: 1
+                      pageSize:
+                        type: "integer"
+                        description: "每页数据数量。"
+                        format: "int64"
+                      maxPageSize:
+                        type: "integer"
+                        description: "每页数据数量最大限制。"
+                        format: "int64"
+                      totalPage:
+                        type: "integer"
+                        description: "总页数。"
+                        format: "int64"
+                        default: -1
+                      totalRow:
+                        type: "integer"
+                        description: "总数据数量。"
+                        format: "int64"
+                        default: -1
+                      optimizeCountQuery:
+                        type: "boolean"
+                        description: "是否优化分页查询 COUNT 语句。"
+                        default: "true"
+                    description: ""
+                description: "问题列表"
+  /v1/question/import:
+    post:
+      summary: "批量导入题目"
+      description: "批量导入题目"
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              required:
+              - "file"
+              type: "object"
+              properties:
+                file:
+                  type: "string"
+                  description: "题目文件"
+                  format: "binary"
+        required: true
+      responses:
+        "200":
+          description: "导入结果"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+                description: "导入结果"
+  /v1/question/template:
+    get:
+      summary: "下载导入模板"
+      description: "下载导入模板"
+      responses:
+        "200":
+          description: "No Content"
+  /v1/history/list:
+    get:
+      summary: "查询历史记录"
+      description: "查询历史记录"
+      parameters:
+      - name: "pageNum"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 1
+      - name: "pageSize"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 10
+      - name: "status"
+        in: "query"
+        description: "题目状态"
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "q"
+        in: "query"
+        description: "查询题目关键字"
+        required: false
+        schema:
+          type: "string"
+          nullable: false
+      - name: "difficulty"
+        in: "query"
+        description: "题目难度"
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: "分页历史记录"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      records:
+                        type: "array"
+                        description: "当前页数据。"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                            questionId:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                            status:
+                              type: "integer"
+                              description: ""
+                            viewCount:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                            username:
+                              type: "string"
+                              description: ""
+                            updateTime:
+                              type: "object"
+                              properties:
+                                seconds:
+                                  type: "integer"
+                                  description: "The number of seconds from the epoch\
+                                    \ of 1970-01-01T00:00:00Z."
+                                  format: "int64"
+                                nanos:
+                                  type: "integer"
+                                  description: "The number of nanoseconds, later along\
+                                    \ the time-line, from the seconds field.\nThis\
+                                    \ is always positive, and never exceeds 999,999,999."
+                              description: ""
+                            question:
+                              type: "object"
+                              properties:
+                                id:
+                                  type: "integer"
+                                  description: ""
+                                  format: "int64"
+                                questionTitle:
+                                  type: "string"
+                                  description: ""
+                                questionTips:
+                                  type: "string"
+                                  description: ""
+                                difficulty:
+                                  type: "integer"
+                                  description: ""
+                                answer:
+                                  type: "string"
+                                  description: ""
+                                categoryName:
+                                  type: "string"
+                                  description: ""
+                                tagNames:
+                                  type: "array"
+                                  description: ""
+                                  items:
+                                    type: "string"
+                                viewCount:
+                                  type: "integer"
+                                  description: ""
+                                  format: "int64"
+                                createTime:
+                                  type: "object"
+                                  properties:
+                                    seconds:
+                                      type: "integer"
+                                      description: "The number of seconds from the\
+                                        \ epoch of 1970-01-01T00:00:00Z."
+                                      format: "int64"
+                                    nanos:
+                                      type: "integer"
+                                      description: "The number of nanoseconds, later\
+                                        \ along the time-line, from the seconds field.\n\
+                                        This is always positive, and never exceeds\
+                                        \ 999,999,999."
+                                  description: ""
+                              description: ""
+                          description: ""
+                        default: "Collections.emptyList()"
+                      pageNumber:
+                        type: "integer"
+                        description: "当前页码。"
+                        format: "int64"
+                        default: 1
+                      pageSize:
+                        type: "integer"
+                        description: "每页数据数量。"
+                        format: "int64"
+                      maxPageSize:
+                        type: "integer"
+                        description: "每页数据数量最大限制。"
+                        format: "int64"
+                      totalPage:
+                        type: "integer"
+                        description: "总页数。"
+                        format: "int64"
+                        default: -1
+                      totalRow:
+                        type: "integer"
+                        description: "总数据数量。"
+                        format: "int64"
+                        default: -1
+                      optimizeCountQuery:
+                        type: "boolean"
+                        description: "是否优化分页查询 COUNT 语句。"
+                        default: "true"
+                    description: ""
+                description: "分页历史记录"
+  /v1/history:
+    put:
+      summary: "标记历史记录"
+      description: "标记历史记录"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                id:
+                  type: "integer"
+                  description: ""
+                  format: "int64"
+                questionId:
+                  type: "integer"
+                  description: ""
+                  format: "int64"
+                status:
+                  type: "integer"
+                  description: ""
+              description: ""
+      responses:
+        "200":
+          description: "清空结果"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+                description: "清空结果"
+  /v1/history/{id}:
+    delete:
+      summary: "删除历史记录"
+      description: "删除历史记录"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: "历史记录id"
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: "删除结果"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+                description: "删除结果"
+  /v1/history/heatmap:
+    get:
+      summary: "获取热力图数据"
+      description: "获取热力图数据"
+      responses:
+        "200":
+          description: "热力图数据"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "array"
+                    description: ""
+                    items:
+                      type: "object"
+                      properties:
+                        date:
+                          type: "object"
+                          properties:
+                            seconds:
+                              type: "integer"
+                              description: "The number of seconds from the epoch of\
+                                \ 1970-01-01T00:00:00Z."
+                              format: "int64"
+                            nanos:
+                              type: "integer"
+                              description: "The number of nanoseconds, later along\
+                                \ the time-line, from the seconds field.\nThis is\
+                                \ always positive, and never exceeds 999,999,999."
+                          description: ""
+                        count:
+                          type: "integer"
+                          description: ""
+                      description: ""
+                description: "热力图数据"
+  /v1/log/page:
+    get:
+      summary: "查询操作日志"
+      description: "查询操作日志"
+      parameters:
+      - name: "pageNum"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 1
+      - name: "pageSize"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 10
+      - name: "operator"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "string"
+          nullable: false
+      - name: "startTime.seconds"
+        in: "query"
+        description: "The number of seconds from the epoch of 1970-01-01T00:00:00Z."
+        required: false
+        schema:
+          type: "integer"
+          format: "int64"
+          nullable: false
+      - name: "startTime.nanos"
+        in: "query"
+        description: "The number of nanoseconds, later along the time-line, from the\
+          \ seconds field.\nThis is always positive, and never exceeds 999,999,999."
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "endTime.seconds"
+        in: "query"
+        description: "The number of seconds from the epoch of 1970-01-01T00:00:00Z."
+        required: false
+        schema:
+          type: "integer"
+          format: "int64"
+          nullable: false
+      - name: "endTime.nanos"
+        in: "query"
+        description: "The number of nanoseconds, later along the time-line, from the\
+          \ seconds field.\nThis is always positive, and never exceeds 999,999,999."
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: "操作日志列表"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      records:
+                        type: "array"
+                        description: "当前页数据。"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                            content:
+                              type: "string"
+                              description: ""
+                            methodName:
+                              type: "string"
+                              description: ""
+                            requestParams:
+                              type: "string"
+                              description: ""
+                            operator:
+                              type: "string"
+                              description: ""
+                            operationTime:
+                              type: "object"
+                              properties:
+                                seconds:
+                                  type: "integer"
+                                  description: "The number of seconds from the epoch\
+                                    \ of 1970-01-01T00:00:00Z."
+                                  format: "int64"
+                                nanos:
+                                  type: "integer"
+                                  description: "The number of nanoseconds, later along\
+                                    \ the time-line, from the seconds field.\nThis\
+                                    \ is always positive, and never exceeds 999,999,999."
+                              description: ""
+                            timeTaken:
+                              type: "integer"
+                              description: ""
+                              format: "int64"
+                          description: ""
+                        default: "Collections.emptyList()"
+                      pageNumber:
+                        type: "integer"
+                        description: "当前页码。"
+                        format: "int64"
+                        default: 1
+                      pageSize:
+                        type: "integer"
+                        description: "每页数据数量。"
+                        format: "int64"
+                      maxPageSize:
+                        type: "integer"
+                        description: "每页数据数量最大限制。"
+                        format: "int64"
+                      totalPage:
+                        type: "integer"
+                        description: "总页数。"
+                        format: "int64"
+                        default: -1
+                      totalRow:
+                        type: "integer"
+                        description: "总数据数量。"
+                        format: "int64"
+                        default: -1
+                      optimizeCountQuery:
+                        type: "boolean"
+                        description: "是否优化分页查询 COUNT 语句。"
+                        default: "true"
+                    description: ""
+                description: "操作日志列表"
+  /v1/system/info:
+    get:
+      summary: "查询系统信息"
+      description: "查询系统信息"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      questionCount:
+                        type: "integer"
+                        description: "题库数量"
+                        format: "int64"
+                      userCount:
+                        type: "integer"
+                        description: "用户数量"
+                        format: "int64"
+                      todayLogCount:
+                        type: "integer"
+                        description: "今日日志数量"
+                        format: "int64"
+                      totalLogCount:
+                        type: "integer"
+                        description: "总共日志数量"
+                        format: "int64"
+                    description: ""
+  /v1/notice/{id}:
+    delete:
+      summary: "删除通知"
+      description: "删除通知"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+  /v1/notice/status/{id}:
+    get:
+      summary: "根据id更新通知状态"
+      description: "根据id更新通知状态"
+      parameters:
+      - name: "id"
+        in: "path"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+      - name: "status"
+        in: "query"
+        description: ""
+        required: true
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+  /v1/notice/list:
+    get:
+      summary: "分页查询通知"
+      description: "分页查询通知"
+      parameters:
+      - name: "pageNum"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 1
+      - name: "pageSize"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 10
+      - name: "status"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "type"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      records:
+                        type: "array"
+                        description: "当前页数据。"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "integer"
+                              description: ""
+                            title:
+                              type: "string"
+                              description: ""
+                            content:
+                              type: "string"
+                              description: ""
+                            type:
+                              type: "integer"
+                              description: "1:系统通知 2:其它通知"
+                            status:
+                              type: "integer"
+                              description: "1:未读 2:已读"
+                            avatar:
+                              type: "string"
+                              description: ""
+                            username:
+                              type: "string"
+                              description: "用户名"
+                            createTime:
+                              type: "object"
+                              properties:
+                                seconds:
+                                  type: "integer"
+                                  description: "The number of seconds from the epoch\
+                                    \ of 1970-01-01T00:00:00Z."
+                                  format: "int64"
+                                nanos:
+                                  type: "integer"
+                                  description: "The number of nanoseconds, later along\
+                                    \ the time-line, from the seconds field.\nThis\
+                                    \ is always positive, and never exceeds 999,999,999."
+                              description: ""
+                          description: ""
+                        default: "Collections.emptyList()"
+                      pageNumber:
+                        type: "integer"
+                        description: "当前页码。"
+                        format: "int64"
+                        default: 1
+                      pageSize:
+                        type: "integer"
+                        description: "每页数据数量。"
+                        format: "int64"
+                      maxPageSize:
+                        type: "integer"
+                        description: "每页数据数量最大限制。"
+                        format: "int64"
+                      totalPage:
+                        type: "integer"
+                        description: "总页数。"
+                        format: "int64"
+                        default: -1
+                      totalRow:
+                        type: "integer"
+                        description: "总数据数量。"
+                        format: "int64"
+                        default: -1
+                      optimizeCountQuery:
+                        type: "boolean"
+                        description: "是否优化分页查询 COUNT 语句。"
+                        default: "true"
+                    description: ""
+  /v1/notice/mark-all-read:
+    put:
+      summary: "标记所有通知已读"
+      description: "标记所有通知已读"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+  /v1/notice/admin/page:
+    get:
+      summary: "管理端分页查询通知"
+      description: "管理端分页查询通知"
+      parameters:
+      - name: "pageNum"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 1
+      - name: "pageSize"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 10
+      - name: "status"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+      - name: "type"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      records:
+                        type: "array"
+                        description: "当前页数据。"
+                        items:
+                          type: "object"
+                          properties:
+                            id:
+                              type: "integer"
+                              description: ""
+                            title:
+                              type: "string"
+                              description: ""
+                            content:
+                              type: "string"
+                              description: ""
+                            type:
+                              type: "integer"
+                              description: "1:系统通知 2:其它通知"
+                            status:
+                              type: "integer"
+                              description: "1:未读 2:已读"
+                            avatar:
+                              type: "string"
+                              description: ""
+                            username:
+                              type: "string"
+                              description: "用户名"
+                            createTime:
+                              type: "object"
+                              properties:
+                                seconds:
+                                  type: "integer"
+                                  description: "The number of seconds from the epoch\
+                                    \ of 1970-01-01T00:00:00Z."
+                                  format: "int64"
+                                nanos:
+                                  type: "integer"
+                                  description: "The number of nanoseconds, later along\
+                                    \ the time-line, from the seconds field.\nThis\
+                                    \ is always positive, and never exceeds 999,999,999."
+                              description: ""
+                          description: ""
+                        default: "Collections.emptyList()"
+                      pageNumber:
+                        type: "integer"
+                        description: "当前页码。"
+                        format: "int64"
+                        default: 1
+                      pageSize:
+                        type: "integer"
+                        description: "每页数据数量。"
+                        format: "int64"
+                      maxPageSize:
+                        type: "integer"
+                        description: "每页数据数量最大限制。"
+                        format: "int64"
+                      totalPage:
+                        type: "integer"
+                        description: "总页数。"
+                        format: "int64"
+                        default: -1
+                      totalRow:
+                        type: "integer"
+                        description: "总数据数量。"
+                        format: "int64"
+                        default: -1
+                      optimizeCountQuery:
+                        type: "boolean"
+                        description: "是否优化分页查询 COUNT 语句。"
+                        default: "true"
+                    description: ""
+  /v1/notice/admin/send:
+    post:
+      summary: "管理端发送通知"
+      description: "管理端发送通知"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - "content"
+              - "title"
+              - "username"
+              type: "object"
+              properties:
+                title:
+                  type: "string"
+                  description: ""
+                content:
+                  type: "string"
+                  description: ""
+                username:
+                  type: "string"
+                  description: ""
+              description: ""
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+  /user/admin/page:
+    get:
+      summary: "page"
+      description: "page"
+      parameters:
+      - name: "pageNum"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 1
+      - name: "pageSize"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "integer"
+          nullable: false
+          default: 10
+      - name: "username"
+        in: "query"
+        description: ""
+        required: false
+        schema:
+          type: "string"
+          nullable: false
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      records:
+                        type: "array"
+                        description: "当前页数据。"
+                        items:
+                          type: "object"
+                          properties:
+                            username:
+                              type: "string"
+                              description: "用户名"
+                            nickname:
+                              type: "string"
+                              description: "昵称"
+                            email:
+                              type: "string"
+                              description: "邮箱"
+                            mobile:
+                              type: "string"
+                              description: "手机号"
+                            sex:
+                              type: "integer"
+                              description: "性别：1-男性，2-女性"
+                            avatar:
+                              type: "string"
+                              description: "头像"
+                            role:
+                              type: "string"
+                              description: "角色"
+                            status:
+                              type: "string"
+                              description: "状态：1-启用，2-禁用"
+                            loginIp:
+                              type: "string"
+                              description: "登录IP"
+                            usedQuota:
+                              type: "integer"
+                              description: "统计信息"
+                              format: "int64"
+                            requestCount:
+                              type: "integer"
+                              description: "请求次数"
+                              format: "int64"
+                          description: ""
+                        default: "Collections.emptyList()"
+                      pageNumber:
+                        type: "integer"
+                        description: "当前页码。"
+                        format: "int64"
+                        default: 1
+                      pageSize:
+                        type: "integer"
+                        description: "每页数据数量。"
+                        format: "int64"
+                      maxPageSize:
+                        type: "integer"
+                        description: "每页数据数量最大限制。"
+                        format: "int64"
+                      totalPage:
+                        type: "integer"
+                        description: "总页数。"
+                        format: "int64"
+                        default: -1
+                      totalRow:
+                        type: "integer"
+                        description: "总数据数量。"
+                        format: "int64"
+                        default: -1
+                      optimizeCountQuery:
+                        type: "boolean"
+                        description: "是否优化分页查询 COUNT 语句。"
+                        default: "true"
+                    description: ""
+  /v1/account/login:
+    post:
+      summary: "登录"
+      description: "登录"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              required:
+              - "username"
+              type: "object"
+              properties:
+                username:
+                  maxLength: 30
+                  minLength: 4
+                  pattern: "^[a-zA-Z0-9]{4,30}$"
+                  type: "string"
+                  description: ""
+                password:
+                  maxLength: 16
+                  minLength: 4
+                  pattern: "^[a-zA-Z0-9_]{4,16}$"
+                  type: "string"
+                  description: ""
+              description: "登录信息"
+      responses:
+        "200":
+          description: "登录结果"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      username:
+                        type: "string"
+                        description: ""
+                      nickname:
+                        type: "string"
+                        description: ""
+                      token:
+                        type: "string"
+                        description: ""
+                    description: ""
+                description: "登录结果"
+  /v1/account:
+    put:
+      summary: "更新用户信息"
+      description: "更新用户信息"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                nickname:
+                  type: "string"
+                  description: "昵称"
+                email:
+                  type: "string"
+                  description: "邮箱"
+                mobile:
+                  type: "string"
+                  description: "手机号"
+                sex:
+                  type: "integer"
+                  description: "性别：1-男性，2-女性"
+                avatar:
+                  type: "string"
+                  description: "头像"
+              description: "更新信息"
+      responses:
+        "200":
+          description: "用户信息"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+                description: "用户信息"
+  /v1/account/change-password:
+    post:
+      summary: "修改密码"
+      description: "修改密码"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: "object"
+              properties:
+                oldPassword:
+                  maxLength: 16
+                  minLength: 4
+                  pattern: "^[a-zA-Z0-9_]{4,16}$"
+                  type: "string"
+                  description: ""
+                newPassword:
+                  maxLength: 16
+                  minLength: 4
+                  pattern: "^[a-zA-Z0-9_]{4,16}$"
+                  type: "string"
+                  description: ""
+              description: "密码信息"
+      responses:
+        "200":
+          description: "修改结果"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "string"
+                    description: ""
+                description: "修改结果"
+  /v1/account/me:
+    get:
+      summary: "获取用户信息"
+      description: "获取用户信息"
+      responses:
+        "200":
+          description: "用户信息"
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "object"
+                    properties:
+                      username:
+                        type: "string"
+                        description: "用户名"
+                      nickname:
+                        type: "string"
+                        description: "昵称"
+                      email:
+                        type: "string"
+                        description: "邮箱"
+                      mobile:
+                        type: "string"
+                        description: "手机号"
+                      sex:
+                        type: "integer"
+                        description: "性别：1-男性，2-女性"
+                      avatar:
+                        type: "string"
+                        description: "头像（Base64）"
+                      role:
+                        type: "string"
+                        description: "角色"
+                    description: ""
+                description: "用户信息"
+components:
+  schemas:
+    java.time.Instant:
+      type: "object"
+      properties:
+        seconds:
+          type: "integer"
+          description: "The number of seconds from the epoch of 1970-01-01T00:00:00Z."
+          format: "int64"
+        nanos:
+          type: "integer"
+          description: "The number of nanoseconds, later along the time-line, from\
+            \ the seconds field.\nThis is always positive, and never exceeds 999,999,999."
+      description: ""
+    org.chenjh.aiqasystem.domain.dto.system.UserTokenDTO:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+          description: ""
+        nickname:
+          type: "string"
+          description: ""
+        token:
+          type: "string"
+          description: ""
+      description: ""
+    org.chenjh.aiqasystem.domain.dto.system.UserInfoDTO:
+      type: "object"
+      properties:
+        username:
+          type: "string"
+          description: "用户名"
+        nickname:
+          type: "string"
+          description: "昵称"
+        email:
+          type: "string"
+          description: "邮箱"
+        mobile:
+          type: "string"
+          description: "手机号"
+        sex:
+          type: "integer"
+          description: "性别：1-男性，2-女性"
+        avatar:
+          type: "string"
+          description: "头像（Base64）"
+        role:
+          type: "string"
+          description: "角色"
+      description: ""

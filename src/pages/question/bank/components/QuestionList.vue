@@ -98,7 +98,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getQuestionList,getTagListGroup } from '@/api/question';
+import { getQuestionList,getTagListGroup } from '@/api';
 import type {QuestionListQueryParams,QuestionListResponse,QuestionItem,TagGroup } from '@/api/types/index';
 import { difficultyItems } from '@/types/question';
 import { IconReload, IconFlame,IconSearch } from '@tabler/icons-vue';

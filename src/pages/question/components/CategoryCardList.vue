@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getQuestionCategoryList } from '@/api/question';
+import { getQuestionCategoryList } from '@/api/index';
 import type { CategoryListQueryParams, CategoryListResponse, CategoryItem } from '@/api/types/index';
 import CategoryCard from './CategoryCard.vue';
 import { IconChevronCompactRight } from '@tabler/icons-vue';

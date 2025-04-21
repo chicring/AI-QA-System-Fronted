@@ -3,8 +3,9 @@ import {
   IconDashboard,
   IconHttpQue,
   IconUsersPlus,
-  IconLogs
-
+  IconLogs,
+  IconBell,
+  IconSettings
 } from '@tabler/icons-vue';
 
 
@@ -37,6 +38,16 @@ const sidebarItem: MenuItem[] = [
     title: '系统日志',
     icon: IconLogs,
     to: '/admin/logs'
+  },
+  {
+    title: '系统通知',
+    icon: IconBell,
+    to: '/admin/notifications'
+  },
+  {
+    title: '系统配置',
+    icon: IconSettings,
+    to: '/admin/settings'
   }
 ];
 

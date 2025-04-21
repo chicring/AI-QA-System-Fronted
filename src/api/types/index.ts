@@ -1,148 +1,70 @@
+// Import all types from their respective files
+import type { ApiResponse, PageResponse } from './common';
+import type { TagUpdateRequest, TagItem, TagGroup } from './tag';
+import type { CategoryUpdateRequest, CategoryCreateRequest, CategoryItem, CategoryListResponse, CategoryListQueryParams } from './category';
+import type { QuestionCreateRequest, QuestionItem, QuestionListResponse, QuestionAnswerItem, QuestionListQueryParams } from './question';
+import type { QueryHistoryRequest, QueryHistoryItem, QueryHistoryResponse, MarkHistoryRequest } from './history';
+import type { UserLoginRequest, UserLoginResponse, UserInfoResponse, UserRegisterRequest, UpdateUserInfoRequest } from './user';
+import type { ChatRequest, ChatResponse } from './chat';
+import type { QueryOperationLogVO, OperationLogItem, OperationLogResponse } from './log';
+import type { NotificationItem, NotificationListResponse, QueryNotificationVO, AdminNotificationQueryVO, AdminNotificationResponse, SendNotificationRequest } from './notice';
+import type { SystemInfo } from './system';
 
-// Response structure
-interface ApiResponse<T> {
-    code: number;
-    msg: string;
-    requestId: string | null;
-    data: T;
-}
-
-// Tag related types
-interface TagUpdateRequest {
-    id?: number;
-    tagName: string;  // Required, min length 1, max length 20
-    categoryId?: number;
-    sortNum?: number;
-}
-
-// Category related types
-interface CategoryUpdateRequest {
-    id?: number;
-    categoryName?: string;
-    Description?: string;  // Note: capital D in Description as per API spec
-    categoryLevel?: number;
-    parentCategoryId?: number;
-    sortNum?: number;
-    imageUrl?: string;
-}
-
-interface CategoryItem {
-    id: number | null;
-    categoryName: string | null;
-    description: string | null;  // Note: capital D in Description as per API spec
-    categoryLevel: number | null;
-    parentCategoryId: number | null;
-    sortNum: number;
-    imageUrl: string | null;
-}
-
-interface CategoryListResponse {
-    pageNum: number;
-    pageSize: number;
-    total: number;
-    data: CategoryItem[];
-}
-
-// Tag group types
-interface TagGroup {
-    categoryName: string;
-    tagNames: string[];
-}
-
-// Question related types
-interface QuestionCreateRequest {
-    questionTitle: string;
-    questionTips: string;
-    difficulty: number;
-    categoryId: number;
-    tagIds: number[];
-    answers: string[];
-}
-
-interface QuestionItem {
-    questionId: number;
-    questionTitle: string;
-    questionTips: string;
-    difficulty: number;
-    viewCount: number;
-    createTime: Date | null;
-    tagNames: string[];
-    categoryId: number | null;
-}
-
-interface QuestionListResponse {
-    pageNum: number;
-    pageSize: number;
-    total: number;
-    data: QuestionItem[];
-}
-
-// Query parameter types
-interface CategoryListQueryParams {
-    pageNum?: number;  // default: 1
-    pageSize?: number;  // default: 10
-    q?: string;
-}
-
-interface QuestionListQueryParams {
-    pageNum?: number;
-    pageSize?: number;
-    categoryId?: number | null;
-    title?: string | null;
-    difficulty?: number | null;
-    tagNames?: string[];
-}
-
-interface QuestionAnswerItem {
-    questionId: number;
-    questionAnswers: string[];
-}
-
-
-interface QueryHistoryRequest {
-    pageNum: number;
-    pageSize: number;
-    status: number | null;
-    q: string | null;
-    difficulty: number | null;
-}
-
-interface QueryHistoryItem {
-    questionId: number;
-    questionTitle: string;
-    questionTips: string;
-    difficulty: number;
-    viewCount: number;
-    createTime: Date;
-    tagNames: string[];
-    status: number;
-    lastViewTime: Date;
-    categoryId?: number | null;
-}
-
-interface QueryHistoryResponse {
-    pageNum: number;
-    pageSize: number;
-    total: number;
-    data: QueryHistoryItem[];
-}
-
-
-// Export all types
+// Re-export all types
 export type {
+    // Common types
     ApiResponse,
+    PageResponse,
+
+    // Tag related types
     TagUpdateRequest,
+    TagItem,
+    TagGroup,
+
+    // Category related types
     CategoryUpdateRequest,
+    CategoryCreateRequest,
     CategoryItem,
     CategoryListResponse,
-    TagGroup,
+    CategoryListQueryParams,
+
+    // Question related types
     QuestionCreateRequest,
     QuestionItem,
     QuestionListResponse,
-    CategoryListQueryParams,
-    QuestionListQueryParams,
     QuestionAnswerItem,
+    QuestionListQueryParams,
+
+    // History related types
     QueryHistoryRequest,
     QueryHistoryItem,
-    QueryHistoryResponse
+    QueryHistoryResponse,
+    MarkHistoryRequest,
+
+    // User related types
+    UserLoginRequest,
+    UserLoginResponse,
+    UserInfoResponse,
+    UserRegisterRequest,
+    UpdateUserInfoRequest,
+
+    // Notification related types
+    NotificationItem,
+    NotificationListResponse,
+    QueryNotificationVO,
+    AdminNotificationQueryVO,
+    AdminNotificationResponse,
+    SendNotificationRequest,
+
+    // Chat related types
+    ChatRequest,
+    ChatResponse,
+
+    // Log related types
+    QueryOperationLogVO,
+    OperationLogItem,
+    OperationLogResponse,
+
+    // System related types
+    SystemInfo,
 };

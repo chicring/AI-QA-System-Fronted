@@ -45,6 +45,26 @@ const AdminRoutes = {
         requireAuth: true,
         requiresAdmin: true
       }
+    },
+    {
+      name: 'notifications-management',
+      path: 'notifications',
+      component: () => import('@/pages/admin/notifications/index.vue'),
+      meta: {
+        keepAlive: true,
+        requireAuth: true,
+        requiresAdmin: true
+      }
+    },
+    {
+      name: 'system-settings',
+      path: 'settings',
+      component: () => import('@/pages/admin/settings/index.vue'),
+      meta: {
+        keepAlive: true,
+        requireAuth: true,
+        requiresAdmin: true
+      }
     }
   ]
 };

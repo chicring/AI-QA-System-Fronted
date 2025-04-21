@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import type { QuestionListQueryParams, QuestionListResponse, QuestionItem } from '@/api/types/index';
-import { getQuestionList } from '@/api/question';
+import { getQuestionList } from '@/api';
 const props = defineProps<{
     categoryId: string;
 }>();

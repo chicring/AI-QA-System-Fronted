@@ -49,7 +49,7 @@
 import { IconSearch } from '@tabler/icons-vue';
 import type { CategoryListResponse, CategoryItem, CategoryListQueryParams } from '@/api/types/index';
 import { ref } from 'vue';
-import { getQuestionCategoryList } from '@/api/question';
+import { getQuestionCategoryList } from '@/api';
 import CategoryCard from '../components/CategoryCard.vue';
 
 const params = ref<CategoryListQueryParams>({

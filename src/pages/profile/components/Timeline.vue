@@ -14,7 +14,7 @@
 import { heatmapColors, type HeatmapItem } from '@/types/chats/heatmap';
 import Heatmap from '@/components/heatmap/Heatmap.vue';
 import { ref, onMounted } from 'vue';
-import { getHeatmapData } from '@/api/question';
+import { getHeatmapData } from '@/api';
 
 // 示例数据
 const heatmapData = ref<HeatmapItem[]>([])

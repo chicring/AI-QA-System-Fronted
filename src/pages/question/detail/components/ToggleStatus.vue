@@ -22,7 +22,7 @@
 import { ref } from 'vue';
 import { IconTagStarred } from '@tabler/icons-vue';
 import { toggleStatusItems } from '@/types/question/index';
-import { updateQuestionStatus } from '@/api/question';
+import { updateQuestionStatus } from '@/api';
 
 const props =  defineProps({
     questionId: {

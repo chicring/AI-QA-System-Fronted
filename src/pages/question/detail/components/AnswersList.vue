@@ -10,7 +10,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getQuestionAnswerList } from '@/api/question';
+import { getQuestionAnswerList } from '@/api';
 import type { QuestionAnswerItem } from '@/api/types/index';
 import MarkdownViewer from '@/components/doc/MarkdownViewer.vue';
 

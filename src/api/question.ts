@@ -1,67 +1,47 @@
 import request from "@/utils/request"
 import type { 
-    CategoryListQueryParams, 
     ApiResponse, 
-    CategoryListResponse,
     QuestionListQueryParams,
     QuestionListResponse,
     QuestionItem,
-    TagGroup,
-    QuestionAnswerItem,
-    QueryHistoryRequest,
-    QueryHistoryResponse,
-    CategoryItem
+    QuestionCreateRequest
 } from "./types/index"
-import type { HeatmapItem } from "@/types/chats/heatmap"
 
-
-export function getQuestionCategoryList(params: CategoryListQueryParams): Promise<ApiResponse<CategoryListResponse>> {
-    return request.get('/v1/category/list',
-        {
-            params: params
-        }
-    )
-}
-
+/**
+ * 获取问题列表
+ * @param params 查询参数
+ */
 export function getQuestionList(params: QuestionListQueryParams): Promise<ApiResponse<QuestionListResponse>> {
     return request.post('/v1/question/list-question',
         params
     )
 }
 
-export function getTagListGroup(): Promise<ApiResponse<TagGroup[]>> {
-    return request.get('/v1/tag/list-group')
-}
-
+/**
+ * 根据ID获取问题详情
+ * @param id 问题ID
+ */
 export function getQuestionDetailById(id: string): Promise<ApiResponse<QuestionItem>> {
     return request.get(`/v1/question/${id}`)
 }
 
-export function getQuestionAnswerList(id: number): Promise<ApiResponse<QuestionAnswerItem>> {
-    return request.get(`/v1/answer/${id}`)
+
+/**
+ * 创建问题
+ * @param data 问题数据
+ */
+export function createQuestion(data: QuestionCreateRequest): Promise<ApiResponse<any>> {
+    return request.post('/v1/question', data)
 }
 
-
-// 查询历史
-export function getQueryHistory(params: QueryHistoryRequest): Promise<ApiResponse<QueryHistoryResponse>> {
-    return request.get('/v1/history/list', {
-        params: params
-    })
+/**
+ * 删除问题
+ * @param id 问题ID
+ */
+export function deleteQuestion(id: number): Promise<ApiResponse<any>> {
+    return request.delete(`/v1/question/${id}`)
 }
 
-// 获取热力图数据
-export function getHeatmapData(): Promise<ApiResponse<HeatmapItem[]>> {
-    return request.get('/v1/history/heatmap')
-}
-
-// 获取分类详情
-export function getCategoryDetail(id: string): Promise<ApiResponse<CategoryItem>> {
-    return request.get(`/v1/category/${id}`)
-}
-
-// 标记题目状态
-export function updateQuestionStatus(questionId: string, status: number): Promise<ApiResponse<null>> {
-    return request.put(`/v1/history/${questionId}`, null, {
-        params: { status }
-    });
+export function importQuestion(data: any): Promise<ApiResponse<any>> {
+    return request.post('/v1/question/import', data)
 }

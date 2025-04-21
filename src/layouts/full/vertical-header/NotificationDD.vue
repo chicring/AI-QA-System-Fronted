@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ref,onMounted } from 'vue';
 import { notificationStatusList } from '@/types/sys';
-import type {QueryNotificationVO, NotificationListResponse, NotificationItem} from '@/api/types/notification'
-import { getNotificationList,markAllRead } from '@/api/user'
+import type {QueryNotificationVO, NotificationListResponse, NotificationItem} from '@/api/types/'
+import { getNotificationList,markAllRead } from '@/api'
 
 
 const request = ref<QueryNotificationVO>({
@@ -17,13 +17,13 @@ const reposne = ref<NotificationListResponse>(
     pageNum: 0,
     pageSize: 0,
     total: 0,
-    list: [],
+    data: [] as NotificationItem[],
   }
 )
 
 function fetchNotices(){
   getNotificationList(request.value).then((res) => {
-    reposne.value = res
+    reposne.value = res.data
   })
 }
 
@@ -48,7 +48,7 @@ onMounted(() => {
         通知
         <v-chip v-if="reposne.total > 0" color="warning" variant="flat" size="small" class="ml-2 text-white">{{ reposne.total }}</v-chip>
       </h6>
-      <a href="#" class="text-decoration-underline text-primary text-subtitle-2">全部标记为已读</a>
+      <v-btn color="primary" variant="text" @click="fetchMarkAllRead">全部标记为已读</v-btn>
     </div>
     <v-select :items="notificationStatusList" v-model="request.status" 
               color="primary" 
@@ -64,18 +64,19 @@ onMounted(() => {
   </div>
   <v-divider></v-divider>
   <perfect-scrollbar style="max-height: 650px">
-    <v-list v-if="reposne.total > 0" class="py-0" lines="three" v-for="item in reposne.list" :key="item.id">
+    <v-list v-if="reposne.total > 0" class="py-0" lines="three" v-for="item in reposne.data" :key="item.id">
       <v-list-item value="" color="secondary" class="no-spacer">
 
         <div class="d-inline-flex align-center justify-space-between w-100">
           <h6 class="text-subtitle-1 font-weight-regular">{{ item.title }}</h6>
-          <span class="text-subtitle-2 text-medium-emphasis">{{ item.createTime }}</span>
         </div>
 
         <p class="text-subtitle-2 text-medium-emphasis mt-1">{{ item.content }}</p>
-        <div class="mt-3">
-          <v-chip size="small" text="Unread" color="error" variant="tonal" class="mr-2" />
-          <v-chip size="small" text="New" color="warning" variant="tonal" />
+        <div class="mt-3 d-flex align-center justify-space-between">
+          <v-chip v-if="item.status === 1" size="small" text="未读" color="warning" variant="tonal" class="mr-2" />
+          <v-chip v-else size="small" text="已读" color="success" variant="tonal" />
+
+          <span class="text-subtitle-2 text-medium-emphasis">{{ item.createTime }}</span>
         </div>
       </v-list-item>
       <v-divider></v-divider>

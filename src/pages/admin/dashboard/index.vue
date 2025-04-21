@@ -1,53 +1,72 @@
 <template>
-  <v-container>
-    <v-row>
-      <v-col cols="12">
-        <h1 class="text-h4 mb-4">管理后台</h1>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col cols="12" md="4">
-        <v-card>
-          <v-card-title>题库统计</v-card-title>
-          <v-card-text>
-            <div class="text-h4">{{ questionBankCount }}</div>
-            <div class="text-subtitle-2">总题库数</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="4">
-        <v-card>
-          <v-card-title>用户统计</v-card-title>
-          <v-card-text>
-            <div class="text-h4">{{ userCount }}</div>
-            <div class="text-subtitle-2">总用户数</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-      <v-col cols="12" md="4">
-        <v-card>
-          <v-card-title>今日日志</v-card-title>
-          <v-card-text>
-            <div class="text-h4">{{ todayLogCount }}</div>
-            <div class="text-subtitle-2">今日系统日志数</div>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-  </v-container>
+  <v-sheet rounded="md" class="px-2 py-1" style="min-height: calc(100vh - 90px)">
+    <div class="d-flex justify-end mb-2 align-center">
+      <v-chip size="small" color="primary" variant="flat">
+        <IconReload size="16" class="mr-1" /> 最后更新: {{ lastUpdated }}
+      </v-chip>
+      <v-btn 
+        icon="mdi-refresh" 
+        size="small" 
+        color="primary" 
+        variant="text" 
+        class="ml-2" 
+        @click="fetchSystemInfo"
+        :loading="isRefreshing"
+      > 
+       <IconReload />
+      </v-btn>
+    </div>
+    <div>
+      <v-row dense>
+        <v-col cols="12" md="4">
+          <QuestionBankCard :total="SystemInfo.questionCount" />
+        </v-col>
+        <v-col cols="12" md="4">
+          <UserStatsCard :total="SystemInfo.userCount" />
+        </v-col>
+        <v-col cols="12" md="4">
+          <SystemLogCard :total="SystemInfo.totalLogCount" :todayLogCount="SystemInfo.todayLogCount" />
+        </v-col>
+      </v-row>
+    </div>
+  </v-sheet>
+
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
+import QuestionBankCard from './components/QuestionBankCard.vue';
+import UserStatsCard from './components/UserStatsCard.vue';
+import SystemLogCard from './components/SystemLogCard.vue';
+import type { SystemInfo } from '@/api/types/index';
+import { getSystemInfo } from '@/api';
+import { IconReload } from '@tabler/icons-vue';
 
-const questionBankCount = ref(0);
-const userCount = ref(0);
-const todayLogCount = ref(0);
+const SystemInfo = ref<SystemInfo>(
+  {
+    questionCount: 0,
+    userCount: 0,
+    todayLogCount: 0,
+    totalLogCount: 0
+  }
+);
 
-onMounted(async () => {
-  // TODO: 从API获取统计数据
-  questionBankCount.value = 0;
-  userCount.value = 0;
-  todayLogCount.value = 0;
+const lastUpdated = ref<string>('加载中...');
+const isRefreshing = ref<boolean>(false);
+function fetchSystemInfo() {
+  isRefreshing.value = true;
+  getSystemInfo().then((res) => {
+    SystemInfo.value = res.data;
+    // 获取当前时间 时分秒
+    lastUpdated.value = new Date().toLocaleTimeString();
+  }).catch(() => {
+    lastUpdated.value = '加载失败';
+  }).finally(() => {
+    isRefreshing.value = false;
+  });
+}
+
+onMounted(() => {
+  fetchSystemInfo();
 });
 </script> 

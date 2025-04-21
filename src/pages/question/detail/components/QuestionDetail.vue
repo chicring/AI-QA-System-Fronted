@@ -51,7 +51,7 @@
   <script setup lang="ts">
   import { ref } from 'vue';
   import DifficultyChip from '@/components/question/difficultyChip.vue';
-  import { getQuestionDetailById } from '@/api/question';
+  import { getQuestionDetailById } from '@/api';
   import { IconStar, IconEye } from '@tabler/icons-vue';
   import AnswersList from '@/pages/question/detail/components/AnswersList.vue';
   import ToggleStatus from '@/pages/question/detail/components/ToggleStatus.vue';

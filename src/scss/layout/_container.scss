@@ -30,6 +30,7 @@ html {
 
 .page-wrapper-admin {
   min-height: calc(100vh - 60px);
+  padding: 16px;
   border-radius: $border-radius-root;
   background: rgb(var(--v-theme-containerBg));
 }
