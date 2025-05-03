@@ -1,7 +1,13 @@
-import request from "@/utils/request"
-import type { ApiResponse, SystemInfo } from './types/index';
+import request from '@/utils/request';
+import type { SystemInfoResponse } from './types/system';
 
-// 获取系统信息
-export function getSystemInfo(): Promise<ApiResponse<SystemInfo>> {
-    return request.get('/v1/system/info');
-}
+/**
+ * 获取系统信息
+ * @returns Promise<SystemInfoResponse>
+ */
+export const getSystemInfo = (): Promise<SystemInfoResponse> => {
+  return request({
+    url: '/v1/system/info',
+    method: 'get'
+  });
+}; 

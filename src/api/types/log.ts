@@ -1,32 +1,29 @@
-// 操作日志查询参数
-interface QueryOperationLogVO {
-    pageNum?: number;
-    pageSize?: number;
-    operator?: string | null;
-    startTime?: string | null;
-    endTime?: string | null;
+import type { ApiResponse, PaginatedData, BasePageParams } from './common';
+
+/**
+ * 日志项基本结构
+ */
+export interface LogItem {
+  id: number;
+  content: string;
+  methodName: string;
+  requestParams: string;
+  operator: string;
+  operationTime: { seconds: number; nanos: number };
+  timeTaken: number;
 }
 
-// 操作日志项
-interface OperationLogItem {
-    id: number;
-    content: string;
-    methodName: string;
-    requestParams: string;
-    operator: string;
-    operationTime: {
-        seconds: number;
-        nanos: number;
-    };
-    timeTaken: number;
+
+/**
+ * `/v1/log/page` (GET) 请求查询参数类型
+ */
+export interface LogListQueryParams extends BasePageParams {
+  operator?: string;
+  startTime?: string;
+  endTime?: string;
 }
 
-// 操作日志响应
-interface OperationLogResponse {
-    pageNum: number;
-    pageSize: number;
-    total: number;
-    data: OperationLogItem[];
-}
-
-export type { QueryOperationLogVO, OperationLogItem, OperationLogResponse }; 
+/**
+ * `/v1/log/page` (GET) 响应类型
+ */
+export type LogListResponse = ApiResponse<PaginatedData<LogItem>>; 

@@ -29,8 +29,8 @@
 
     <v-data-table-server
       :headers="categoryHeaders"
-      :items="response.data"
-      :items-length="response.total"
+      :items="response.data.records"
+      :items-length="totalItemsCount"
       v-model:items-per-page="params.pageSize"
       v-model:page="params.pageNum"
       :items-per-page-options="[10, 20, 50, 100]"
@@ -93,25 +93,39 @@ import { ref, computed, onMounted } from 'vue';
 import { IconReload, IconPlus } from '@tabler/icons-vue';
 import { IconEye, IconPencil, IconTrash } from '@tabler/icons-vue';
 import { categoryHeaders } from './header';
-import type { CategoryItem, CategoryListResponse, CategoryListQueryParams } from '@/api/types';
-import { getQuestionCategoryList } from '@/api';
+import type { CategoryItem, CategoryListResponse, CategoryListQueryParams } from '@/api';
+import { getCategoryList, saveCategory } from '@/api';
 import CategoryCreateDialog from './dialog/CategoryCreateDialog.vue';
 import CategoryEditDialog from './dialog/CategoryEditDialog.vue';
 import ConfirmButton from '@/components/shared/ConfirmButton.vue';
+import { useToast } from 'vue-toast-notification';
+
+const toast = useToast();
 const params = ref<CategoryListQueryParams>({
   pageNum: 1,
   pageSize: 10,
-  q: null,
+  q: undefined,
 })
 
 const response = ref<CategoryListResponse>({
-  pageNum: 1,
-  pageSize: 10,
-  total: 0,
-  data: [] as CategoryItem[]
+  code: 0,
+  msg: '',
+  requestId: '',
+  data: {
+    records: [] as CategoryItem[],
+    totalRow: 0,
+    totalPage: 0,
+    pageNumber: 1,
+    pageSize: 10
+  }
 })
 
 const isLoading = ref(false)
+
+// 计算属性，提供总数据条数
+const totalItemsCount = computed(() => {
+  return response.value?.data?.totalRow || 0;
+})
 
 const fetchCategories = async (options?: any) => {
   try {
@@ -120,8 +134,10 @@ const fetchCategories = async (options?: any) => {
       params.value.pageNum = options.page
       params.value.pageSize = options.itemsPerPage
     }
-    const res = await getQuestionCategoryList(params.value);
-    response.value = res.data;
+    const res = await getCategoryList(params.value);
+    if (res.code === 200) {
+      response.value = res;
+    }
   } catch (error) {
     console.error('获取分类列表失败:', error);
   } finally {
@@ -139,17 +155,16 @@ const handleSaveCategory = async () => {
 // 删除分类
 const deleteCategory = async (id: number) => {
   try {
-      // 这里应该调用API来删除分类，暂时只是模拟
-      console.log('删除分类:', id);
-      
-      // 从本地列表移除
-      const index = response.value.data.findIndex(item => item.id === id);
+      toast.warning('删除分类功能暂未实现', {position: 'top'});
+      // 从本地列表移除，模拟效果
+      const index = response.value.data.records.findIndex(item => item.id === id);
       if (index > -1) {
-        response.value.data.splice(index, 1);
-        response.value.total--;
+        response.value.data.records.splice(index, 1);
+        response.value.data.totalRow--;
       }
   } catch (error) {
       console.error('删除分类失败:', error);
+      toast.error('删除分类失败', {position: 'top'});
   }
 };
 

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth';
+import { useUserStore } from '@/stores/user';
 import { router } from '@/router';
 
 const AuthTokenKey = 'Authorization'
@@ -7,7 +8,7 @@ const AuthTokenKey = 'Authorization'
 
 const service = axios.create({
     baseURL: import.meta.env.VITE_API_URL,
-    timeout: 5000,
+    timeout: 20000,
 });
 
 service.interceptors.request.use(
@@ -32,8 +33,9 @@ service.interceptors.response.use(
         if (res.code === 200) {
             return res
         } else if (res.code === 401) {
-            // useAuthStore().logout()
-           
+            useAuthStore().clearAuth()
+            useUserStore().clearUserInfo()
+
             // router.push('/auth/login')
         } else {
 

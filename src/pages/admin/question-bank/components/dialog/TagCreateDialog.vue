@@ -11,12 +11,7 @@
             <v-divider></v-divider>
             <v-card-text>
                 <ConfigItem :config="{key: 'tagName', label: '标签名称', type: 'string', description: '输入标签名称'}" v-model:model-value="tagItem.tagName" />
-                <ConfigItem :config="{key: 'categoryId', label: '所属分类', type: 'string', description: '选择所属分类'}">
-                    <CategoryIdSelect v-model:categoryId="tagItem.categoryId" />
-                </ConfigItem>
-                
-                
-                <ConfigItem :config="{key: 'sortNum', label: '排序', type: 'number', description: '输入排序'}" v-model:model-value="tagItem.sortNum" />
+                <ConfigItem :config="{key: 'category', label: '所属分类', type: 'string', description: '输入所属分类'}" v-model:model-value="tagItem.category" />
                 
                 <v-alert
                     v-if="errorMessage"
@@ -41,13 +36,12 @@
 import ConfigItem from '@/components/shared/ConfigItem.vue';
 import { IconPlus } from '@tabler/icons-vue';
 import { ref } from 'vue';
-import { addTag } from '@/api';
-import CategoryIdSelect from '../select/CategoryIdSelect.vue';
+import { saveTag } from '@/api';
+import type { SaveTagRequest } from '@/api';
 
-const tagItem = ref({
+const tagItem = ref<SaveTagRequest>({
     tagName: '',
-    categoryId: '',
-    sortNum: '0',
+    category: '',
 })
 
 const dialog = ref(false)
@@ -59,8 +53,7 @@ const handleCancel = () => {
     // 重置表单
     tagItem.value = {
         tagName: '',
-        categoryId: '',
-        sortNum: '0',
+        category: '',
     }
 }
 
@@ -71,19 +64,12 @@ const handleSave = async () => {
         return
     }
 
-    // 准备数据 - 确保类型正确
-    const tagData = {
-        tagName: tagItem.value.tagName.trim(),
-        categoryId: tagItem.value.categoryId ? parseInt(tagItem.value.categoryId) : undefined,
-        sortNum: tagItem.value.sortNum ? parseInt(tagItem.value.sortNum) : undefined
-    }
-
     loading.value = true
     errorMessage.value = ''
 
     try {
         // 调用API保存标签
-        const response = await addTag(tagData)
+        const response = await saveTag(tagItem.value)
         
         // 发出保存成功事件，让父组件刷新列表
         emit('save', response.data)
@@ -92,8 +78,7 @@ const handleSave = async () => {
         dialog.value = false
         tagItem.value = {
             tagName: '',
-            categoryId: '',
-            sortNum: '',
+            category: '',
         }
     } catch (error: any) {
         // 处理错误

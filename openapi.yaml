@@ -162,6 +162,47 @@ paths:
                   data:
                     type: "string"
                     description: ""
+  /v1/tag/all:
+    get:
+      summary: "查询所有标签"
+      description: "查询所有标签"
+      responses:
+        "200":
+          description: ""
+          content:
+            application/json:
+              schema:
+                type: "object"
+                properties:
+                  code:
+                    type: "integer"
+                    description: ""
+                  msg:
+                    type: "string"
+                    description: ""
+                  requestId:
+                    type: "string"
+                    description: ""
+                  data:
+                    type: "array"
+                    description: ""
+                    items:
+                      type: "object"
+                      properties:
+                        id:
+                          type: "integer"
+                          description: ""
+                          format: "int64"
+                        tagName:
+                          type: "string"
+                          description: ""
+                        categoryId:
+                          type: "string"
+                          description: ""
+                        categoryName:
+                          type: "string"
+                          description: ""
+                      description: ""
   /v1/tag/list:
     get:
       summary: "分页查询标签"

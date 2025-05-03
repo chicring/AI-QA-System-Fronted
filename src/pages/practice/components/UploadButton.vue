@@ -16,7 +16,8 @@
 import { ref } from 'vue';
 import { IconPaperclip } from '@tabler/icons-vue';
 import { useToast } from 'vue-toast-notification';
-import { uploadFile } from '@/api/chat';
+import { uploadChatFile } from '@/api/chat';
+import type { ChatUploadQueryParams } from '@/api/types/chat';
 
 const toast = useToast();
 const fileInput = ref<HTMLInputElement | null>(null);
@@ -46,7 +47,16 @@ const handleFileChange = async (event: Event) => {
 
   try {
     isUploading.value = true;
-    const response = await uploadFile(props.conversationId, file);
+    // 创建查询参数对象
+    const params: ChatUploadQueryParams = {
+      conversationId: props.conversationId
+    };
+    // 创建FormData对象并添加文件
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    // 调用新的API函数
+    const response = await uploadChatFile(params, formData);
     if (response.code === 200) {
       toast.success('文件上传成功', {
         duration: 3000,

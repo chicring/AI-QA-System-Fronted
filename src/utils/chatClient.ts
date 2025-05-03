@@ -64,7 +64,7 @@ class ChatClient {
                 
                 // 解码二进制数据为文本
                 const chunkText = this.decoder.decode(value, { stream: true })
-                let lines = chunkText.split("\n")
+                const lines = chunkText.split("\n")
                 
                 // 处理上一个数据块的不完整数据
                 if (partialData) {
@@ -80,6 +80,8 @@ class ChatClient {
                 // 处理每一行数据
                 for (const line of lines) {
                     if (!line.length) continue
+
+                    console.log('line', line)
                     
                     // 检查行是否以"data:"开头
                     if (!line.startsWith("data:")) {
@@ -100,7 +102,7 @@ class ChatClient {
                         }
                         
                         // 处理响应内容
-                        const responseContent = chatResponse.content || ''
+                        const responseContent = chatResponse.content 
                         finalResult += responseContent
                         onData(responseContent)
                     } catch (err) {

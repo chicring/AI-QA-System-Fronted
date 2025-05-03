@@ -1,53 +1,48 @@
-import request from "@/utils/request"
+import request from '@/utils/request'; // 假设存在一个封装好的请求工具
 import type {
-    CategoryListQueryParams,
-    ApiResponse,
-    CategoryListResponse,
-    CategoryItem,
-    CategoryUpdateRequest,
-    CategoryCreateRequest
-} from "./types/index"
+  SaveCategoryRequest,
+  SaveCategoryResponse,
+  CategoryDetailResponse,
+  CategoryListQueryParams,
+  CategoryListResponse
+} from './types/category';
 
 /**
- * 获取问题分类列表
- * @param params 查询参数
+ * 添加或更新分类
+ * @param data 请求体，包含分类信息
+ * @returns Promise<SaveCategoryResponse>
  */
-export function getQuestionCategoryList(params: CategoryListQueryParams): Promise<ApiResponse<CategoryListResponse>> {
-    return request.get('/v1/category/list',
-        {
-            params: params
-        }
-    )
-}
+export const saveCategory = (data: SaveCategoryRequest): Promise<SaveCategoryResponse> => {
+  return request({
+    url: '/v1/category',
+    method: 'post',
+    data
+  });
+};
 
 /**
  * 获取分类详情
  * @param id 分类ID
+ * @returns Promise<CategoryDetailResponse>
  */
-export function getCategoryDetail(id: number): Promise<ApiResponse<CategoryItem>> {
-    return request.get(`/v1/category/${id}`)
-}
+export const getCategoryDetail = (id: number): Promise<CategoryDetailResponse> => {
+  return request({
+    url: `/v1/category/${id}`,
+    method: 'get'
+  });
+};
 
 /**
- * 更新分类信息
- * @param data 分类更新数据
+ * 获取分类列表（分页）
+ * @param params 查询参数，包含分页信息等
+ * @returns Promise<CategoryListResponse>
  */
-export function updateCategory(data: CategoryUpdateRequest): Promise<ApiResponse<string>> {
-    return request.put('/v1/category', data)
-}
+export const getCategoryList = (params: CategoryListQueryParams): Promise<CategoryListResponse> => {
+  return request({
+    url: '/v1/category/list',
+    method: 'get',
+    params
+  });
+};
 
-/**
- * 添加新分类
- * @param data 分类创建数据
- */
-export function addCategory(data: CategoryCreateRequest): Promise<ApiResponse<string>> {
-    return request.post('/v1/category', data)
-}
-
-/**
- * 删除分类
- * @param id 分类ID
- */
-export function deleteCategory(id: number): Promise<ApiResponse<string>> {
-    return request.delete(`/v1/category/${id}`)
-}
+// 注意：openapi.yaml 中未定义 /v1/category/{id} 的 DELETE 方法，因此不创建 deleteCategory 函数

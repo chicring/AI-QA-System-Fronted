@@ -1,53 +1,58 @@
-import request from "@/utils/request"
+import request from '@/utils/request';
 import type {
-    ApiResponse,
-    QueryHistoryRequest,
-    QueryHistoryResponse,
-    MarkHistoryRequest
-} from "./types/index"
-import type { HeatmapItem } from "@/types/chats/heatmap"
+  HistoryListQueryParams,
+  HistoryListResponse,
+  MarkHistoryRequest,
+  MarkHistoryResponse,
+  DeleteHistoryResponse,
+  HeatmapResponse
+} from './types/history';
 
 /**
- * 查询历史
- * @param params 查询参数
+ * 查询历史记录（分页）
+ * @param params 查询参数，包括分页信息和过滤条件
+ * @returns Promise<HistoryListResponse>
  */
-export function getQueryHistory(params: QueryHistoryRequest): Promise<ApiResponse<QueryHistoryResponse>> {
-    return request.get('/v1/history/list', {
-        params: params
-    })
-}
-
-/**
- * 获取热力图数据
- */
-export function getHeatmapData(): Promise<ApiResponse<HeatmapItem[]>> {
-    return request.get('/v1/history/heatmap')
-}
+export const getHistoryList = (params: HistoryListQueryParams): Promise<HistoryListResponse> => {
+  return request({
+    url: '/v1/history/list',
+    method: 'get',
+    params
+  });
+};
 
 /**
  * 标记历史记录
- * @param data 历史记录标记数据
+ * @param data 请求体，包含状态信息
+ * @returns Promise<MarkHistoryResponse>
  */
-export function markHistory(data: MarkHistoryRequest): Promise<ApiResponse<string>> {
-    return request.put('/v1/history', data)
-}
+export const markHistory = (data: MarkHistoryRequest): Promise<MarkHistoryResponse> => {
+  return request({
+    url: '/v1/history',
+    method: 'put',
+    data
+  });
+};
 
 /**
  * 删除历史记录
  * @param id 历史记录ID
+ * @returns Promise<DeleteHistoryResponse>
  */
-export function deleteHistory(id: number): Promise<ApiResponse<string>> {
-    return request.delete(`/v1/history/${id}`)
-}
+export const deleteHistory = (id: number): Promise<DeleteHistoryResponse> => {
+  return request({
+    url: `/v1/history/${id}`,
+    method: 'delete'
+  });
+};
 
 /**
- * 标记题目状态（旧版本，保留兼容性）
- * @param questionId 问题ID
- * @param status 状态码
- * @deprecated 请使用 markHistory 代替
+ * 获取热力图数据
+ * @returns Promise<HeatmapResponse>
  */
-export function updateQuestionStatus(questionId: string, status: number): Promise<ApiResponse<null>> {
-    return request.put(`/v1/history/${questionId}`, null, {
-        params: { status }
-    });
-}
+export const getHeatmapData = (): Promise<HeatmapResponse> => {
+  return request({
+    url: '/v1/history/heatmap',
+    method: 'get'
+  });
+}; 

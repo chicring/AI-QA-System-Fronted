@@ -40,12 +40,12 @@ import { IconSend } from '@tabler/icons-vue';
 import ConfigItem from '@/components/shared/ConfigItem.vue';
 import UserSelect from '@/components/shared/UserSelect.vue';
 import { ref } from 'vue';
-import type { SendNotificationRequest } from '@/api/types';
-import { sendNotification } from '@/api';
+import type { SendNoticeRequest, SendNoticeResponse } from '@/api';
+import { sendNotice } from '@/api';
 import { useToast } from 'vue-toast-notification';
 
 const dialog = ref(false);
-const form = ref<SendNotificationRequest>({
+const form = ref<SendNoticeRequest>({
   title: '',
   content: '',
   username: ''
@@ -53,9 +53,9 @@ const form = ref<SendNotificationRequest>({
 
 const toast = useToast();
 const sendNotify = () => {
-  sendNotification(form.value).then((res) => {
+  sendNotice(form.value).then((res: SendNoticeResponse) => {
     toast.success('发送成功');
-  }).catch((err) => {
+  }).catch((err: Error) => {
     toast.error('发送失败');
   });
 }

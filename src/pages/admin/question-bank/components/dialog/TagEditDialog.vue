@@ -11,9 +11,8 @@
             <v-divider></v-divider>
             <v-card-text v-if="editableTagItem">
                 <ConfigItem :config="{key: 'tagName', label: '标签名称', type: 'string', description: '输入标签名称'}" v-model:model-value="editableTagItem.tagName" />
-                <ConfigItem :config="{key: 'categoryId', label: '所属分类', type: 'string', description: '选择所属分类'}" v-model:model-value="editableTagItem.categoryId" />
-                <ConfigItem :config="{key: 'sortNum', label: '排序', type: 'number', description: '输入排序'}" v-model:model-value="editableTagItem.sortNum" />
-                
+
+                <ConfigItem :config="{key: 'category', label: '所属分类', type: 'string', description: '请输入分类名称'}" v-model:model-value="editableTagItem.category" />
                 <v-alert
                     v-if="errorMessage"
                     type="error"
@@ -36,17 +35,18 @@
 import ConfigItem from '@/components/shared/ConfigItem.vue';
 import { IconPencil } from '@tabler/icons-vue';
 import { ref } from 'vue';
-import { updateTag } from '@/api';
+import { saveTag } from '@/api';
+import type { TagItem, SaveTagRequest } from '@/api';
 
 // 定义 props 接口
 const props = defineProps<{
-    modelValue: any; // 使用 any 类型，实际使用时应该替换为具体的 TagItem 类型
+    modelValue: TagItem;
 }>();
 
 // 定义事件
 const emit = defineEmits<{
-    (e: 'save', item: any): void;
-    (e: 'update:modelValue', value: any): void;
+    (e: 'save', item: TagItem): void;
+    (e: 'update:modelValue', value: TagItem): void;
 }>();
 
 // 内部状态控制对话框显示
@@ -55,13 +55,15 @@ const loading = ref(false);
 const errorMessage = ref('');
 
 // 可编辑的标签数据副本
-const editableTagItem = ref<any | null>(null);
+const editableTagItem = ref<TagItem | null>(null);
 
 // 打开对话框并深拷贝数据
 const openDialog = () => {
     console.log(props.modelValue)
     if (props.modelValue) {
-        editableTagItem.value = JSON.parse(JSON.stringify(props.modelValue));
+        // 确保只复制TagItem所需的字段
+        const { id, tagName, category } = props.modelValue;
+        editableTagItem.value = { id, tagName, category };
         dialog.value = true;
         errorMessage.value = '';
     }
@@ -84,11 +86,10 @@ const handleSave = async () => {
     }
     
     // 准备数据 - 确保类型正确
-    const tagData = {
+    const tagData: SaveTagRequest = {
         id: editableTagItem.value.id,
         tagName: editableTagItem.value.tagName.trim(),
-        categoryId: editableTagItem.value.categoryId ? parseInt(editableTagItem.value.categoryId) : undefined,
-        sortNum: editableTagItem.value.sortNum ? parseInt(editableTagItem.value.sortNum) : undefined
+        category: editableTagItem.value.category?.trim() || ''
     };
     
     loading.value = true;
@@ -96,10 +97,10 @@ const handleSave = async () => {
     
     try {
         // 调用API更新标签
-        const response = await updateTag(tagData);
+        const response = await saveTag(tagData);
         
         // 发出保存成功事件，让父组件刷新列表
-        emit('save', response.data);
+        emit('save', editableTagItem.value);
         
         // 关闭对话框并重置表单
         dialog.value = false;

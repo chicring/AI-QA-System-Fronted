@@ -1,25 +1,22 @@
 <template>
   <div>
     <div>
-        <QuestionListSidebar :categoryId="categoryId" />
+        <QuestionListSidebar/>
     </div>
 
     <div>
-        <QuestionDetail :questionId="id" />
+        <!-- 加载状态-->
+        <QuestionDetail  :key="questionStore.questionData.currentQuestionId ?? 'default'"/>
     </div>
   </div>
 </template> 
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRoute } from 'vue-router';
 import QuestionDetail from '@/pages/question/detail/components/QuestionDetail.vue';
 import QuestionListSidebar from '@/pages/question/detail/components/QuestionListSidebar.vue';
+import { useQuestionStore } from '@/stores/question';
 
-const route = useRoute();
-
-const id = route.params.id as string;
-const categoryId = route.query.categoryId as string;
+const questionStore = useQuestionStore();
 
 </script>
 

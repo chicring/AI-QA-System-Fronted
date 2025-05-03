@@ -30,8 +30,8 @@
     <div>
       <v-data-table-server
         :headers="tagHeaders"
-        :items="response.data"
-        :items-length="response.total"
+        :items="response.data.records"
+        :items-length="totalItemsCount"
         v-model:items-per-page="params.pageSize"
         v-model:page="params.pageNum"
         :items-per-page-options="[10, 20, 50, 100]"
@@ -85,7 +85,7 @@ import { ref, computed } from 'vue';
 import { IconSearch, IconReload, IconPlus, IconEye } from '@tabler/icons-vue';
 import { IconPencil, IconTrash } from '@tabler/icons-vue';
 import { tagHeaders } from './header';
-import type { PageResponse, TagItem } from '@/api/types';
+import type { TagListResponse, TagItem, TagListQueryParams } from '@/api';
 import { getTagList, deleteTag } from '@/api';
 import TagCreateDialog from './dialog/TagCreateDialog.vue';
 import TagEditDialog from './dialog/TagEditDialog.vue';
@@ -95,17 +95,28 @@ import { useToast } from 'vue-toast-notification';
 const toast = useToast();
 const loading = ref(false)
 
-const params = ref({
+const params = ref<TagListQueryParams>({
   pageNum: 1,
   pageSize: 10,
-  q: null,
+  q: undefined,
 })
 
-const response = ref<PageResponse<TagItem>>({
-  pageNum: 1,
-  pageSize: 10,
-  total: 0,
-  data: [] as TagItem[]
+const response = ref<TagListResponse>({
+  code: 0,
+  msg: '',
+  requestId: '',
+  data: {
+    records: [] as TagItem[],
+    totalRow: 0,
+    totalPage: 0,
+    pageNumber: 1,
+    pageSize: 10
+  }
+})
+
+// 计算属性，提供总数据条数
+const totalItemsCount = computed(() => {
+  return response.value?.data?.totalRow || 0;
 })
 
 const fetchTagList = async (options?: any) => {
@@ -115,8 +126,10 @@ const fetchTagList = async (options?: any) => {
       params.value.pageNum = options.page
       params.value.pageSize = options.itemsPerPage
     }
-    const res = await getTagList(params.value.pageNum, params.value.pageSize, params.value.q)
-    response.value = res.data
+    const res = await getTagList(params.value)
+    if (res.code === 200) {
+      response.value = res;
+    }
   } catch (error) {
     console.error('获取标签列表失败:', error);
   } finally {

@@ -1,47 +1,58 @@
-import request from "@/utils/request"
-import type { 
-    ApiResponse, 
-    TagGroup,
-    PageResponse,
-    TagItem,
-    TagUpdateRequest
-} from "./types/index"
-
-/**
- * 获取标签列表分组
- */
-export function getTagListGroup(): Promise<ApiResponse<TagGroup[]>> {
-    return request.get('/v1/tag/list-group')
-}
-
-/**
- * 获取标签列表
- * @param pageNum 页码
- * @param pageSize 每页大小
- * @param q 搜索关键词
- */
-export function getTagList(pageNum: number, pageSize: number, q: string | null): Promise<ApiResponse<PageResponse<TagItem>>> {
-    return request.get('/v1/tag/list', {
-        params: {
-            pageNum,
-            pageSize,
-            q
-        }
-    })
-}
+import request from '@/utils/request'; // 假设存在一个封装好的请求工具
+import type {
+  SaveTagRequest,
+  SaveTagResponse,
+  DeleteTagResponse,
+  TagListQueryParams,
+  TagListResponse,
+  AllTagsResponse
+} from './types/tag';
 
 /**
  * 保存或更新标签
- * @param data 标签数据 {id?, tagName, categoryId}
+ * @param data 请求体，包含标签信息
+ * @returns Promise<SaveTagResponse>
  */
-export function saveOrUpdateTag(data: TagUpdateRequest): Promise<ApiResponse<any>> {
-    return request.post('/v1/tag', data)
-}
+export const saveTag = (data: SaveTagRequest): Promise<SaveTagResponse> => {
+  return request({
+    url: '/v1/tag',
+    method: 'post',
+    data
+  });
+};
 
 /**
  * 删除标签
  * @param id 标签ID
+ * @returns Promise<DeleteTagResponse>
  */
-export function deleteTag(id: number): Promise<ApiResponse<any>> {
-    return request.delete(`/v1/tag/${id}`)
-}
+export const deleteTag = (id: number): Promise<DeleteTagResponse> => {
+  return request({
+    url: `/v1/tag/${id}`,
+    method: 'delete'
+  });
+};
+
+/**
+ * 获取标签列表（分页）
+ * @param params 查询参数，包含分页信息等
+ * @returns Promise<TagListResponse>
+ */
+export const getTagList = (params: TagListQueryParams): Promise<TagListResponse> => {
+  return request({
+    url: '/v1/tag/list',
+    method: 'get',
+    params
+  });
+};
+
+/**
+ * 查询所有标签（不分页）
+ * @returns Promise<AllTagsResponse>
+ */
+export const getAllTags = (): Promise<AllTagsResponse> => {
+  return request({
+    url: '/v1/tag/all',
+    method: 'get'
+  });
+};

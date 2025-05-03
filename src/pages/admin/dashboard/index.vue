@@ -19,13 +19,13 @@
     <div>
       <v-row dense>
         <v-col cols="12" md="4">
-          <QuestionBankCard :total="SystemInfo.questionCount" />
+          <QuestionBankCard :total="systemInfo.questionCount" />
         </v-col>
         <v-col cols="12" md="4">
-          <UserStatsCard :total="SystemInfo.userCount" />
+          <UserStatsCard :total="systemInfo.userCount" />
         </v-col>
         <v-col cols="12" md="4">
-          <SystemLogCard :total="SystemInfo.totalLogCount" :todayLogCount="SystemInfo.todayLogCount" />
+          <SystemLogCard :total="systemInfo.totalLogCount" :todayLogCount="systemInfo.todayLogCount" />
         </v-col>
       </v-row>
     </div>
@@ -38,32 +38,39 @@ import { ref, onMounted } from 'vue';
 import QuestionBankCard from './components/QuestionBankCard.vue';
 import UserStatsCard from './components/UserStatsCard.vue';
 import SystemLogCard from './components/SystemLogCard.vue';
-import type { SystemInfo } from '@/api/types/index';
+import type { SystemInfo } from '@/api';
 import { getSystemInfo } from '@/api';
 import { IconReload } from '@tabler/icons-vue';
 
-const SystemInfo = ref<SystemInfo>(
-  {
-    questionCount: 0,
-    userCount: 0,
-    todayLogCount: 0,
-    totalLogCount: 0
-  }
-);
+const systemInfo = ref<SystemInfo>({
+  questionCount: 0,
+  userCount: 0,
+  todayLogCount: 0,
+  totalLogCount: 0
+});
 
 const lastUpdated = ref<string>('加载中...');
 const isRefreshing = ref<boolean>(false);
+
 function fetchSystemInfo() {
   isRefreshing.value = true;
-  getSystemInfo().then((res) => {
-    SystemInfo.value = res.data;
-    // 获取当前时间 时分秒
-    lastUpdated.value = new Date().toLocaleTimeString();
-  }).catch(() => {
-    lastUpdated.value = '加载失败';
-  }).finally(() => {
-    isRefreshing.value = false;
-  });
+  getSystemInfo()
+    .then((res) => {
+      if (res.code === 200 && res.data) {
+        systemInfo.value = res.data;
+        // 获取当前时间 时分秒
+        lastUpdated.value = new Date().toLocaleTimeString();
+      } else {
+        lastUpdated.value = '加载失败';
+      }
+    })
+    .catch((error) => {
+      console.error('获取系统信息失败:', error);
+      lastUpdated.value = '加载失败';
+    })
+    .finally(() => {
+      isRefreshing.value = false;
+    });
 }
 
 onMounted(() => {

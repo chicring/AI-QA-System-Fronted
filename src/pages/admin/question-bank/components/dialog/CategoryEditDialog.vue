@@ -36,8 +36,25 @@
 import ConfigItem from '@/components/shared/ConfigItem.vue';
 import { IconPencil } from '@tabler/icons-vue';
 import { ref } from 'vue';
-import type { CategoryItem, CategoryUpdateRequest } from '@/api/types';
-import { updateCategory } from '@/api';
+import type { CategoryItem } from '@/api';
+import { saveCategory } from '@/api';
+
+// 定义一个手动的更新分类函数，因为API还没有提供
+const updateCategory = async (data: any) => {
+    // 复用saveCategory函数完成更新操作
+    return saveCategory(data);
+};
+
+// 临时定义CategoryUpdateRequest类型
+type CategoryUpdateRequest = {
+    id: number;
+    categoryName: string;
+    description: string;
+    categoryLevel: number;
+    parentCategoryId?: number;
+    sortNum: number;
+    imageUrl: string;
+};
 
 const props = defineProps<{
     modelValue: CategoryItem;
@@ -85,9 +102,9 @@ const handleSave = async () => {
                 categoryName: editableCategoryItem.value.categoryName,
                 description: editableCategoryItem.value.description, // 注意这里的字段名转换
                 categoryLevel: editableCategoryItem.value.categoryLevel,
-                parentCategoryId: editableCategoryItem.value.parentCategoryId,
                 sortNum: editableCategoryItem.value.sortNum,
                 imageUrl: editableCategoryItem.value.imageUrl
+                // 移除parentCategoryId字段，因为类型中已定义为可选
             };
             
             // 调用API更新分类

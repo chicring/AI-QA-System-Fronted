@@ -16,6 +16,7 @@
 
           <div class="message-user-content">
             <p>{{ message.content }}</p> 
+            <!-- <MarkdownViewer :content="message.content" /> -->
           </div>
         </div>
       </template>

@@ -37,8 +37,8 @@
 import ConfigItem from '@/components/shared/ConfigItem.vue';
 import { IconPlus } from '@tabler/icons-vue';
 import { ref } from 'vue';
-import { addCategory } from '@/api';
-import type { CategoryCreateRequest } from '@/api/types';
+import { saveCategory } from '@/api';
+import type { SaveCategoryRequest } from '@/api';
 
 // 定义emit
 const emit = defineEmits<{
@@ -46,11 +46,10 @@ const emit = defineEmits<{
 }>();
 
 // 分类表单数据
-const categoryItem = ref({
+const categoryItem = ref<SaveCategoryRequest>({
     categoryName: '',
     description: '',
     imageUrl: '',
-    parentCategoryId: null as number | null,
     categoryLevel: 1, // 默认为1级分类
     sortNum: 0,
 });
@@ -74,7 +73,6 @@ const initForm = () => {
         categoryName: '',
         description: '',
         imageUrl: '',
-        parentCategoryId: null,
         categoryLevel: 1,
         sortNum: 0,
     };
@@ -101,18 +99,8 @@ const handleSave = async () => {
 
     isSaving.value = true;
     try {
-        // 准备提交数据
-        const createData: CategoryCreateRequest = {
-            categoryName: categoryItem.value.categoryName,
-            description: categoryItem.value.description, // 注意这里是小写d
-            categoryLevel: categoryItem.value.categoryLevel,
-            parentCategoryId: categoryItem.value.parentCategoryId,
-            sortNum: categoryItem.value.sortNum,
-            imageUrl: categoryItem.value.imageUrl
-        };
-        
         // 调用API添加分类
-        const response = await addCategory(createData);
+        const response = await saveCategory(categoryItem.value);
         
         if (response.code === 200) {
             // 显示成功消息

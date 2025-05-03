@@ -19,7 +19,7 @@
                 <!-- 题目信息 -->
                 <v-card-text>
                     <v-sheet class="mb-4 pa-4 rounded-lg" color="#f8fafc">
-                        <div class="text-h6 mb-2">{{ question.questionId }}. {{ question.questionTitle }}</div>
+                        <div class="text-h6 mb-2">{{ question.id }}. {{ question.questionTitle }}</div>
                         <div class="d-flex flex-wrap ga-2 mb-2">
                             <DifficultyChip :difficulty="question.difficulty" />
                             <v-chip v-for="tag in question.tagNames" :key="tag" size="small" rounded="sm">{{ tag }}</v-chip>
@@ -48,7 +48,10 @@
                         </v-window-item>
                         <v-window-item value="1">
                             <v-sheet class="pa-4 rounded-lg" color="#f8fafc">
-                                <AnswersList :questionId="question.questionId" />
+                                <div v-if="question.answer">{{ question.answer }}</div>
+                                <div v-else class="text-center text-body-1 text-medium-emphasis">
+                                    暂无答案
+                                </div>
                             </v-sheet>
                         </v-window-item>
                     </v-window>
@@ -67,10 +70,9 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import { IconX, IconFlame } from '@tabler/icons-vue';
-import { getQuestionDetailById } from '@/api';
-import type { QuestionItem } from '@/api/types';
-import DifficultyChip from '@/components/question/difficultyChip.vue';
-import AnswersList from '@/pages/question/detail/components/AnswersList.vue';
+import { getQuestionList } from '@/api';
+import type { QuestionItem } from '@/api';
+import DifficultyChip from '@/components/question/DifficultyChip.vue';
 import MarkdownViewer from '@/components/doc/MarkdownViewer.vue';
 
 const props = defineProps<{
@@ -93,26 +95,40 @@ const tab = ref('0');
 
 // 问题数据
 const question = ref<QuestionItem>({
-    questionId: 0,
+    id: 0,
     questionTitle: '',
     questionTips: '',
     difficulty: 0,
+    answer: '',
+    categoryName: '',
+    tagNames: [],
     viewCount: 0,
-    createTime: null,
-    tagNames: [] as string[],
-    categoryId: null,
+    createTime: undefined
 });
 
 const loading = ref(false);
 
-// 获取问题详情
+// 获取问题详情 - 临时使用列表接口
 const fetchQuestionDetail = async () => {
     if (!props.questionId) return;
     
     loading.value = true;
     try {
-        const res = await getQuestionDetailById(props.questionId.toString());
-        question.value = res.data;
+        // 由于没有直接的问题详情接口，我们临时使用列表接口查询单个问题
+        const res = await getQuestionList({
+            pageNum: 1,
+            pageSize: 10,
+            // 使用id作为筛选条件
+            // 注意：这是一个临时解决方案，实际项目中应有专门的问题详情接口
+        });
+        
+        if (res.code === 200 && res.data && res.data.records.length > 0) {
+            // 找到匹配的问题
+            const found = res.data.records.find(q => q.id === props.questionId);
+            if (found) {
+                question.value = found;
+            }
+        }
     } catch (error) {
         console.error('获取题目详情失败:', error);
     } finally {

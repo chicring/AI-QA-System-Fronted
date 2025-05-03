@@ -39,7 +39,7 @@ export const userHeaders = ref<DataTableHeader[]>([
         sortable: true,
     },
     {
-        key: 'status',
+        key: 'enabled',
         title: '状态',
         align: 'center',
         sortable: true,

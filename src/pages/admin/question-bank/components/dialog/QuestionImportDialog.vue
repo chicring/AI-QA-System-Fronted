@@ -78,7 +78,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue';
 import { IconUpload } from '@tabler/icons-vue';
-import { importQuestion } from '@/api';
+import { importQuestions } from '@/api';
+import type { QuestionImportFormData } from '@/api';
 
 // 对话框状态
 const dialog = ref(false);
@@ -94,8 +95,8 @@ const importResult = ref<{
 
 // 文件验证规则
 const fileRules = [
-    value => {
-      return !value || !value.length || value[0].size < 5000000 || 'Avatar size should be less than 2 MB!'
+    (value: File[] | null) => {
+      return !value || !value.length || value[0].size < 5000000 || 'Excel文件大小不应超过5 MB!'
     },
 ]
 
@@ -127,7 +128,7 @@ const handleImport = async () => {
         formData.append('file', file.value);
         
         // 调用API上传文件
-        const res = await importQuestion(formData);
+        const res = await importQuestions({ file: file.value } as QuestionImportFormData);
         
         // 只需要判断接口的code是不是200
         if (res.code === 200) {

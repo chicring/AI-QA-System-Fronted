@@ -1,16 +1,15 @@
-import request from "@/utils/request"
-import type { 
-    ApiResponse, 
-    QueryOperationLogVO,
-    OperationLogResponse
-} from "./types/index"
+import request from '@/utils/request';
+import type { LogListQueryParams, LogListResponse } from './types/log';
 
 /**
- * 获取操作日志列表
- * @param params 查询参数
+ * 查询操作日志（分页）
+ * @param params 查询参数，包括分页信息和过滤条件
+ * @returns Promise<LogListResponse>
  */
-export function getOperationLogList(params: QueryOperationLogVO): Promise<ApiResponse<OperationLogResponse>> {
-    return request.get('/v1/log/page', {
-        params: params
-    })
-} 
+export const getLogList = (params: LogListQueryParams): Promise<LogListResponse> => {
+  return request({
+    url: '/v1/log/page',
+    method: 'get',
+    params
+  });
+}; 

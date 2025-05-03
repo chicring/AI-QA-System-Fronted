@@ -1,58 +1,26 @@
-// 导出所有API函数
-// 问题相关API
-export {
-    getQuestionList,
-    getQuestionDetailById,
-    createQuestion,
-    deleteQuestion,
-    importQuestion
-} from './question';
+// 统一导出所有 API 模块
 
-// 分类相关API
-export {
-    getQuestionCategoryList,
-    getCategoryDetail,
-    updateCategory,
-    addCategory,
-    deleteCategory
-} from './category';
+export * from './category';
+export * from './tag';
+export * from './question';
+export * from './chat';
+export * from './history';
+export * from './log';
+export * from './system';
+export * from './notice';
+export * from './account';
 
-// 标签相关API
-export {
-    getTagListGroup,
-    getTagList,
-    addTag,
-    updateTag,
-    deleteTag
-} from './tag';
+// 统一导出所有类型定义
+export * from './types/common';
+export * from './types/category';
+export * from './types/tag';
+export * from './types/question';
+export * from './types/chat';
+export * from './types/history';
+export * from './types/log';
+export * from './types/system';
+export * from './types/notice';
+export * from './types/account';
 
-// 历史记录相关API
-export {
-    getQueryHistory,
-    getHeatmapData,
-    updateQuestionStatus,
-    markHistory,
-    deleteHistory
-} from './history';
-
-// 操作日志相关API
-export {
-    getOperationLogList
-} from './log';
-
-// 通知相关API
-export {
-    getNotificationList,
-    markAllRead,
-    getAdminNotificationList,
-    updateNotificationStatus,
-    deleteNotification,
-    sendNotification
-} from './notice';
-
-// 系统相关API
-export {
-    getSystemInfo
-} from './system';
-
-
+// 如果还有其他 API 模块，继续在这里导出
+// export * from './otherModule';

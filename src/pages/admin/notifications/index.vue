@@ -118,8 +118,8 @@ import { ref, computed, onMounted } from 'vue';
 import TotalMessage from './components/TotalMessage.vue';
 import StatusMessage from './components/StatusMessage.vue';
 import SendMessage from './components/SendMessage.vue';
-import { getAdminNotificationList, deleteNotification } from '@/api/notice';
-import type { NotificationItem, AdminNotificationQueryVO } from '@/api/types/notice';
+import { getAdminNoticeList, deleteNotice } from '@/api';
+import type { NoticeItem, NoticeListQueryParams } from '@/api';
 import { IconMailCheck, IconMail } from '@tabler/icons-vue';
 // 表格头部定义
 const headers = [
@@ -156,21 +156,21 @@ const headers = [
 ];
 
 // 查询参数
-const queryParams = ref<AdminNotificationQueryVO>({
+const queryParams = ref<NoticeListQueryParams>({
   pageNum: 1,
   pageSize: 10,
-  status: null,
-  type: null
+  status: undefined,
+  type: undefined
 });
 
 // 通知列表
-const notifications = ref<NotificationItem[]>([]);
+const notifications = ref<NoticeItem[]>([]);
 const total = ref(0);
 const loading = ref(false);
 
 // 状态和类型选项
 const statusOptions = [
-  { title: '全部', value: null },
+  { title: '全部', value: undefined },
   { title: '未读', value: 1 },
   { title: '已读', value: 2 }
 ];
@@ -187,10 +187,10 @@ const fetchNotifications = async (options?: any) => {
       queryParams.value.pageNum = options.page
       queryParams.value.pageSize = options.itemsPerPage
     }
-    const res = await getAdminNotificationList(queryParams.value);
+    const res = await getAdminNoticeList(queryParams.value);
     if (res.code === 200 && res.data) {
-      notifications.value = res.data.data;
-      total.value = res.data.total;
+      notifications.value = res.data.records;
+      total.value = res.data.totalRow;
     }
   } catch (error) {
     console.error('获取通知列表失败', error);
@@ -203,7 +203,7 @@ const fetchNotifications = async (options?: any) => {
 const handleDelete = async (id: number) => {
   if (confirm('确定要删除这条通知吗？')) {
     try {
-      const res = await deleteNotification(id);
+      const res = await deleteNotice(id);
       if (res.code === 200) {
         fetchNotifications();
       }
@@ -219,8 +219,8 @@ const resetFilters = () => {
   queryParams.value = {
     pageNum: 1,
     pageSize: queryParams.value.pageSize,
-    status: null,
-    type: null
+    status: undefined,
+    type: undefined
   };
   fetchNotifications();
 };

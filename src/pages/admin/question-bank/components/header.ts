@@ -18,8 +18,14 @@ type DataTableHeader = {
 
 export const  questionHeaders = ref<DataTableHeader[]>([
     {
-        key: 'questionId',
+        key: 'id',
         title: '题目ID',
+        align: 'start',
+        sortable: false,
+    },
+    {
+        key: 'categoryName',
+        title: '题库',
         align: 'start',
         sortable: false,
     },
@@ -67,8 +73,6 @@ export const categoryHeaders = ref<DataTableHeader[]>([
 export const tagHeaders = ref<DataTableHeader[]>([
     { title: 'ID', key: 'id'},
     { title: '标签', key: 'tagName'},
-    { title: '排序', key: 'sortNum', sortable: true },
-    { title: '分类ID', key: 'categoryId', sortable: true },
-    { title: '分类名称', key: 'categoryName', sortable: true },
+    { title: '分类', key: 'category', sortable: true },
     { title: '操作', key: 'actions', sortable: false }
 ])

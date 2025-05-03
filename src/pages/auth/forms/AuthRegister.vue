@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { register } from '@/api/user';
-import type { UserRegisterRequest } from '@/api/types/user';
+import { register } from '@/api';
+import type { UserRegisterRequest } from '@/api';
+import { useToast } from 'vue-toast-notification';
+import 'vue-toast-notification/dist/theme-sugar.css';
 
 const registerRequest = ref<UserRegisterRequest>({
   username: '',
@@ -22,18 +24,44 @@ const passwordRules = ref([
 ]);
 const emailRules = ref([(v: string) => !!v || '邮箱不能为空', (v: string) => /.+@.+\..+/.test(v) || '请输入有效的邮箱地址']);
 
-async function validate() {
+async function validate(event: Event) {
+  // 阻止表单默认提交行为
+  event.preventDefault();
   
-  await register(registerRequest.value)
+  const toast = useToast();
+  
+  try {
+    // 调用注册API
+    await register(registerRequest.value);
+    
+    // 显示成功通知
+    toast.success('注册成功！即将跳转到登录页面...', {
+      position: 'top-right',
+      duration: 3000,
+    });
+    
+    // 延迟跳转到登录页面
+    setTimeout(() => {
+      window.location.href = '/login';
+    }, 2000);
+    
+  } catch (err: any) {
+    // 显示错误通知
+    toast.error(err.message || '注册失败，请稍后再试', {
+      position: 'top-right',
+      duration: 5000,
+    });
+    console.error('Registration error:', err);
+  }
 }
 </script>
 
 <template>
 
-  <v-form @submit="validate" ref="Regform" lazy-validation class="mt-7 loginForm">
+  <v-form @submit.prevent="validate" ref="Regform" lazy-validation class="mt-7 loginForm">
   
     <v-text-field
-          v-model="registerRequest.nickname"
+          v-model="registerRequest.username"
           density="comfortable"
           hide-details="auto"
           variant="outlined"
@@ -64,7 +92,7 @@ async function validate() {
       color="primary"
     ></v-text-field>
     <v-text-field
-      v-model="registerRequest.username"
+      v-model="registerRequest.nickname"
       label="用户昵称"
       class="mt-4 mb-4"
       required

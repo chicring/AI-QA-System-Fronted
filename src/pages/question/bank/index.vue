@@ -22,7 +22,7 @@
 
         <div>
             <v-row>
-                <v-col v-for="category in categoryList.data" :cols="6" :sm="4" :md="3">
+                <v-col v-for="category in categoryList.records" :key="category.id" :cols="6" :sm="4" :md="3">
                     <CategoryCard :category="category" />
                 </v-col>
             </v-row>
@@ -32,11 +32,11 @@
         <v-col cols="8">
           <v-container class="max-width">
             <v-pagination
-              v-model="categoryList.pageNum"
-              :length="Math.ceil(categoryList.total / categoryList.pageSize)"
+              v-model="currentPage"
+              :length="Math.ceil(totalItemsCount / categoryList.pageSize)"
               class="my-4"
-              @next="jumpToPage(categoryList.pageNum + 1)"
-              @prev="jumpToPage(categoryList.pageNum - 1)"
+              @next="jumpToPage(currentPage + 1)"
+              @prev="jumpToPage(currentPage - 1)"
               @update:modelValue="handlePageChange"
             ></v-pagination>
           </v-container>
@@ -47,23 +47,37 @@
 
 <script setup lang="ts">
 import { IconSearch } from '@tabler/icons-vue';
-import type { CategoryListResponse, CategoryItem, CategoryListQueryParams } from '@/api/types/index';
-import { ref } from 'vue';
-import { getQuestionCategoryList } from '@/api';
+import type { CategoryListQueryParams, PaginatedData, CategoryItem } from '@/api';
+import { ref, onMounted, computed } from 'vue';
+import { getCategoryList } from '@/api';
 import CategoryCard from '../components/CategoryCard.vue';
 
 const params = ref<CategoryListQueryParams>({
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 16,
     q: undefined,
-})
+});
 
-const categoryList = ref<CategoryListResponse>({
-  pageNum: 1,
-  pageSize: 6, 
-  total: 0,
-  data: [] as CategoryItem[]
-})
+const categoryList = ref<PaginatedData<CategoryItem>>({
+  records: [] as CategoryItem[],
+  totalRow: 0,
+  totalPage: 0,
+  pageNumber: 1,
+  pageSize: 10
+});
+
+// 使用计算属性确保始终有值
+const currentPage = computed({
+  get: () => params.value.pageNum || 1,
+  set: (val) => {
+    params.value.pageNum = val;
+  }
+});
+
+// 计算属性，提供总数据条数
+const totalItemsCount = computed(() => {
+  return categoryList.value?.totalRow || 0;
+});
 
 const updateParams = (newParams: Partial<typeof params.value>) => {
   // 合并新参数到现有参数
@@ -89,9 +103,17 @@ const handlePageChange = (page: number) => {
 };
 
 const fetchCategoryList = async () => {
-    const res = await getQuestionCategoryList(params.value);
-    categoryList.value = res.data;
-}
+  try {
+    const res = await getCategoryList(params.value);
+    if (res.code === 200 && res.data) {
+      categoryList.value = res.data;
+    }
+  } catch (error) {
+    console.error('获取分类列表失败:', error);
+  }
+};
 
-fetchCategoryList();
+onMounted(() => {
+  fetchCategoryList();
+});
 </script>

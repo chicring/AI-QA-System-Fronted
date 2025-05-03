@@ -4,99 +4,117 @@
         app
         elevation="0"
         floating
+        width="270"
+        :rail="isCollapse"
     >
         <template #prepend>
-            <div class="pa-2">
+            <div class="pa-2 d-flex justify-space-between">
                 <v-text-field
+                    v-if="!isCollapse"
+                    class="ma-0 pa-0"
                     placeholder="搜索"
                     flat
                     variant="solo-filled"
                     density="compact"
                     rounded="sm"
                     :hideDetails="true"
-                    v-model="params.title"
-                    @update:modelValue="updateParams({ title: $event })"
-                ></v-text-field>
+                    v-model="searchTitle"
+                    @update:modelValue="questionStore.searchQuestion(searchTitle)"
+                >
+                </v-text-field>
+
+                <v-btn v-if="!isCollapse" icon flat class="ma-0 pa-0 opacity-50" @click="isCollapse = !isCollapse">
+                    <IconLayoutSidebarLeftCollapse />
+                </v-btn>
+
+                <v-btn v-else icon flat class="ma-0 pa-0 opacity-70" @click="isCollapse = !isCollapse">
+                    <IconLayoutSidebarRightCollapse />
+                </v-btn>
+
             </div>
-            <!-- <div>
-                <v-btn flat variant="tonal" size="small">
-                    <IconArrowLeft />
-                    上一题
-                </v-btn>
-
-                <v-btn flat variant="tonal" size="small">
-                    <IconArrowRight />
-                    下一题
-                </v-btn>
-
-            </div> -->
         </template>
 
-        <v-list
-            nav
-            density="comfortable"
-            transition="slide-y-transition"
-        >
-            <v-list-item
-                color="primary"
-                rounded="sm"
-                v-for="item in questionList.data"
-                :key="item.questionId"
-                :to= "{
-                    path: `/question/detail/${item.questionId}`,
-                    query: {
-                        categoryId: item.categoryId,
-                    }
-                }"
+        <perfect-scrollbar v-if="!isCollapse" class="scrollnavbar">
+            <v-list
+                nav
+                density="comfortable"
+                transition="slide-y-transition"
             >
-                <v-list-item-title>
-                    
-                    <strong>{{ item.questionTitle }}</strong>
-                </v-list-item-title>
-            </v-list-item>
-        </v-list>
+                <v-list-item
+                   
+                    color="secondary"
+                    activeColor="secondary"
+                    hoverColor="secondary"
+                    rounded="sm"
+                    v-for="item in questionStore.questionData.responseData.records"
+                    :key="item.id"
+                    :active="questionStore.questionData.currentQuestionId === item.id"
+                    @click="questionStore.toggleQuestion(item.id)"
+                >
+                    <v-list-item-title>
+                        <strong>{{ item.questionTitle }}</strong>
+                    </v-list-item-title>
+                </v-list-item>
+
+                <!-- <v-btn v-else v-for="item in questionStore.questionData.responseData.records" size="small" class="mb-1 pa-0" flat variant="tonal">
+                        {{ item.id }}
+                </v-btn> -->
+                
+                <!-- 无限滚动加载器 -->
+                <div v-if="questionStore.questionData.responseData.records.length > 0" 
+                     v-intersect="loadMoreQuestions"
+                     class="load-more-trigger pa-2 text-center">
+                    <v-progress-circular v-if="questionStore.questionData.loading.list" 
+                                        indeterminate 
+                                        size="24" 
+                                        color="primary" 
+                                        class="my-2"></v-progress-circular>
+                    <div v-else-if="!hasMoreQuestions" class="text-caption text-medium-emphasis">没有更多问题</div>
+                </div>
+            </v-list>
+        </perfect-scrollbar>
+
+
     </v-navigation-drawer>
 </template>
 
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import type { QuestionListQueryParams, QuestionListResponse, QuestionItem } from '@/api/types/index';
-import { getQuestionList } from '@/api';
-const props = defineProps<{
-    categoryId: string;
-}>();
+import { ref, computed } from 'vue';
+import { useQuestionStore } from '@/stores/question';
+import { IconLayoutSidebarLeftCollapse, IconLayoutSidebarRightCollapse } from '@tabler/icons-vue';
+// 引入perfect-scrollbar组件
+import { PerfectScrollbar } from 'vue3-perfect-scrollbar';
+// 初始化问题store
+const questionStore = useQuestionStore();
 
-const params = ref<QuestionListQueryParams>({
-    pageNum: 1,
-    pageSize: 50,
-    categoryId: Number(props.categoryId),
-    title: undefined,
-    difficulty: undefined,
-    tagNames: [] as string[],
-})
+const isCollapse = ref(false);
 
-const questionList = ref<QuestionListResponse>({
-    pageNum: 1,
-    pageSize: 50,
-    total: 0,
-    data: [] as QuestionItem[],
-})
+// 创建一个本地title用于搜索输入框
+const searchTitle = ref<string>('');
 
-const fetchQuestionList = async () => {
-    const res = await getQuestionList(params.value);
-    questionList.value = res.data;
-}
+// 判断是否还有更多问题
+const hasMoreQuestions = computed(() => {
+    const { pageNumber, totalPage } = questionStore.questionData.responseData;
+    return pageNumber < totalPage;
+});
 
-// 更新查询参数并重新获取数据
-const updateParams = (newParams: Partial<QuestionListQueryParams>) => {
-  params.value = { ...params.value, ...newParams };
-  // 当更新筛选条件时，重置到第一页
-  if ('categoryId' in newParams || 'title' in newParams || 'difficulty' in newParams || 'tagNames' in newParams) {
-    params.value.pageNum = 1;
-  }
-  fetchQuestionList();
+// 加载更多问题
+const loadMoreQuestions = (isIntersecting: boolean) => {
+    if (isIntersecting && !questionStore.questionData.loading.list && hasMoreQuestions.value) {
+        questionStore.loadMoreQuestions();
+    }
 };
 
-fetchQuestionList();
 </script>
+
+<style scoped>
+.scrollnavbar {
+    height: calc(100vh - 140px);
+    overflow-y: auto;
+}
+
+.load-more-trigger {
+    min-height: 48px;
+}
+</style>

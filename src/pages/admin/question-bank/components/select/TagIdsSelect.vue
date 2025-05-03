@@ -40,7 +40,7 @@
 
 <script setup lang="ts">
 import { getTagList } from '@/api'
-import type { TagItem } from '@/api/types';
+import type { TagItem, TagListQueryParams } from '@/api';
 import { ref, computed, onMounted, watch } from 'vue';
 
 // 定义props
@@ -70,10 +70,10 @@ const selectedTagIds = computed({
 });
 
 // 搜索参数
-const params = ref({
+const params = ref<TagListQueryParams>({
     pageNum: 1,
     pageSize: 20,
-    q: null as string | null
+    q: undefined
 });
 
 // 标签选项列表
@@ -92,8 +92,10 @@ const updateSelectedTags = (value: any) => {
 const fetchTagOptions = async () => {
     loading.value = true;
     try {   
-        const res = await getTagList(params.value.pageNum, params.value.pageSize, params.value.q);
-        tagOptions.value = res.data.data;
+        const res = await getTagList(params.value);
+        if (res.code === 200 && res.data) {
+            tagOptions.value = res.data.records;
+        }
     } catch (error) {
         console.error('获取标签列表失败:', error);
     } finally {

@@ -46,8 +46,8 @@
 </template>
 
 <script setup lang="ts">
-import { getUserList } from '@/api/user';
-import type { UserItem, UserPageQueryVO, UserPageResponse } from '@/api/types/user';
+import { getAdminUserList } from '@/api';
+import type { UserListItem, AdminUserListQueryParams, AdminUserListResponse } from '@/api';
 import { ref, computed, onMounted, watch } from 'vue';
 
 // 定义props
@@ -69,8 +69,8 @@ const selectedUser = computed({
         // 如果没有选择用户，返回null
         if (props.username === null || props.username === undefined) return null;
         
-        // 根据username找到对应的UserItem对象
-        return userOptions.value.find(user => user.username === props.username) || null;
+        // 根据username找到对应的UserListItem对象
+        return userOptions.value.find((user: UserListItem) => user.username === props.username) || null;
     },
     set: (value) => {
         // 提取username值，如果是对象的话
@@ -80,17 +80,17 @@ const selectedUser = computed({
 });
 
 // 搜索参数
-const params = ref<UserPageQueryVO>({
-    page: 1,
-    size: 20,
+const params = ref<AdminUserListQueryParams>({
+    pageNum: 1,
+    pageSize: 20,
     username: undefined
 });
 
 // 用户选项列表
-const userOptions = ref<UserItem[]>([]);
+const userOptions = ref<UserListItem[]>([]);
 
 // 更新选中的用户
-const updateSelectedUser = (value: any) => {
+const updateSelectedUser = (value: UserListItem | null) => {
     // 提取username值，如果是对象的话
     const username = value && typeof value === 'object' ? value.username : value;
     emit('update:username', username);
@@ -100,9 +100,9 @@ const updateSelectedUser = (value: any) => {
 const fetchUserOptions = async () => {
     loading.value = true;
     try {   
-        const res = await getUserList(params.value);
+        const res = await getAdminUserList(params.value);
         if (res.code === 200 && res.data) {
-            userOptions.value = res.data.data;
+            userOptions.value = res.data.records;
         }
     } catch (error) {
         console.error('获取用户列表失败:', error);

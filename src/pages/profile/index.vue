@@ -2,9 +2,16 @@
     <v-container>
         <v-row>
             <v-col cols="12" md="3">
-                <UserInfo />
-                <p class="text-h5 text-center text-medium-emphasis mb-3">我的简历</p>
-                <Resume />
+                <v-row>
+                    <v-col cols="12" sm="6" md="12">
+                        <UserInfo />
+                    </v-col>
+                    <v-col cols="12" sm="6" md="12">
+                        <p class="text-h5 text-center text-medium-emphasis mb-3">我的简历</p>
+                        <Resume />
+                    </v-col>
+                </v-row>
+                
             </v-col>
             <v-col cols="12" md="9">
                 <Timeline />

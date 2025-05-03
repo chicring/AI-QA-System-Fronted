@@ -1,7 +1,7 @@
 const MainRoutes = {
   path: '/',
   meta: {
-    requiresAuth: true
+    requiresAuth: false
   },
   component: () => import('@/layouts/full/FullLayout.vue'),
   children: [
@@ -19,7 +19,7 @@ const MainRoutes = {
       path: 'question',
       component: () => import('@/pages/question/index.vue'),
       meta: {
-        keepAlive: true,
+        keepAlive: false,
         requireAuth: false,
       }
     },
@@ -38,18 +38,17 @@ const MainRoutes = {
       props: true,
       component: () => import('@/pages/question/bank/[id].vue'),
       meta: {
-        keepAlive: true,
+        keepAlive: false,
         requireAuth: false,
       }
     },
     {
-      path: 'question/detail/:id',
+      path: 'question/detail',
       name: 'QuestionDetail',
-      props: true,
-      component: () => import('@/pages/question/detail/[id].vue'),
+      component: () => import('@/pages/question/detail/index.vue'),
       meta: {
-        keepAlive: true,
-        requireAuth: true,
+        keepAlive: false,
+        requireAuth: false,
         // hiddenHeader: true,
       }
     },
@@ -68,8 +67,8 @@ const MainRoutes = {
       path: 'profile',
       component: () => import('@/pages/profile/index.vue'),
       meta: {
-        keepAlive: true,
-        requireAuth: false,
+        keepAlive: false,
+        requireAuth: true,
       }
     }
   ]

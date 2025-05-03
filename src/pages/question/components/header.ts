@@ -22,21 +22,33 @@ const  headers = ref<DataTableHeader[]>([
         title: '标题',
         align: 'start',
         sortable: false,
+        minWidth: '200px',
+    },
+    {
+        key: 'categoryName',
+        title: '题库',
+        align: 'start',
+        sortable: false,
+        width: 120,
     },
     {
         key: 'difficulty',
         title: '难度',
         sortable: false,
+        width: 80,
     },
     {
         key: 'tagNames',
         title: '标签',
         align: 'start',
         sortable: false,
+        minWidth: '150px',
+        maxWidth: '300px',
     },
     {
         key: 'viewCount',
         title: '浏览量',
+        width: 100,
     },
 
 ])

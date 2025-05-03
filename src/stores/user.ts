@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 import { ref } from "vue";
 import type { userState } from "./types";
-import { getUserInfo } from "@/api/user";
+import { getUserInfo } from "@/api";
 
 export const useUserStore = defineStore('user', () => {
     const user = ref<userState>(
@@ -15,9 +15,14 @@ export const useUserStore = defineStore('user', () => {
         user.value.userInfo = res.data;
     }
 
+    const clearUserInfo = () => {
+        user.value.userInfo = null;
+    }
+
     return {
         user,
-        fetchUserInfo
+        fetchUserInfo,
+        clearUserInfo
     }
 }, {
     persist: true

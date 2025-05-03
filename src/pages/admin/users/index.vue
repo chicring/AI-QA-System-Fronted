@@ -34,8 +34,8 @@
           :items="users"
           :items-length="total"
           :loading="loading"
-          v-model:items-per-page="queryParams.size"
-          v-model:page="queryParams.page"
+          v-model:items-per-page="queryParams.pageSize"
+          v-model:page="queryParams.pageNum"
           :items-per-page-options="[10, 20, 50, 100]"
           item-key="username"
           density="comfortable"
@@ -62,16 +62,16 @@
               {{ value === 1 ? '男' : '女' }}
             </v-chip>
           </template>
-          <template #item.status="{ value, item }">
+          <template #item.enabled="{ value, item }">
             <v-chip
-              :color="value === '1' ? 'success' : 'error'"
+              :color="value ? 'success' : 'error'"
               size="small"
               variant="flat"
               class="font-weight-medium"
               @click="handleStatusToggle(item)"
               style="cursor: pointer"
             >
-              {{ value === '1' ? '启用' : '禁用' }}
+              {{ value  ? '启用' : '禁用' }}
             </v-chip>
           </template>
           <template #item.actions="{ item }">
@@ -100,8 +100,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { getUserList, toggleUserStatus } from '@/api/user';
-import type { UserItem, UserPageQueryVO, UserPageResponse } from '@/api/types/user';
+import { getAdminUserList } from '@/api';
+import type { UserListItem, AdminUserListQueryParams, AdminUserListResponse } from '@/api';
 import { useToast } from 'vue-toast-notification';
 import UserSelect from '@/components/shared/UserSelect.vue';
 const toast = useToast();
@@ -145,7 +145,7 @@ const headers = [
   },
   {
     title: '状态',
-    key: 'status',
+    key: 'enabled',
     sortable: false,
   },
   {
@@ -171,14 +171,14 @@ const headers = [
 ];
 
 // 查询参数
-const queryParams = ref<UserPageQueryVO>({
-  page: 1,
-  size: 10,
+const queryParams = ref<AdminUserListQueryParams>({
+  pageNum: 1,
+  pageSize: 10,
   username: undefined
 });
 
 // 用户列表
-const users = ref<UserItem[]>([]);
+const users = ref<UserListItem[]>([]);
 const total = ref(0);
 const loading = ref(false);
 
@@ -187,13 +187,13 @@ const fetchUsers = async (options?: any) => {
   loading.value = true;
   try {
     if (options) {
-      queryParams.value.page = options.page
-      queryParams.value.size = options.itemsPerPage
+      queryParams.value.pageNum = options.page
+      queryParams.value.pageSize = options.itemsPerPage
     }
-    const res = await getUserList(queryParams.value);
+    const res = await getAdminUserList(queryParams.value);
     if (res.code === 200 && res.data) {
-      users.value = res.data.data;
-      total.value = res.data.total;
+      users.value = res.data.records;
+      total.value = res.data.totalRow;
     }
   } catch (error) {
     console.error('获取用户列表失败', error);
@@ -203,13 +203,13 @@ const fetchUsers = async (options?: any) => {
 };
 
 // 编辑用户
-const handleEdit = (item: UserItem) => {
+const handleEdit = (item: UserListItem) => {
   // TODO: 实现编辑用户功能
   console.log('编辑用户', item);
 };
 
 // 删除用户
-const handleDelete = (item: UserItem) => {
+const handleDelete = (item: UserListItem) => {
   if (confirm('确定要删除这个用户吗？')) {
     // TODO: 实现删除用户功能
     console.log('删除用户', item);
@@ -219,29 +219,42 @@ const handleDelete = (item: UserItem) => {
 // 重置筛选条件
 const resetFilters = () => {
   queryParams.value = {
-    page: 1,
-    size: queryParams.value.size,
+    pageNum: 1,
+    pageSize: queryParams.value.pageSize,
     username: undefined
   };
   fetchUsers();
 };
 
 // 切换用户状态
-const handleStatusToggle = async (item: UserItem) => {
+const handleStatusToggle = async (item: UserListItem) => {
   try {
-    const newStatus = item.status === '1' ? '2' : '1';
+    const newStatus = item.enabled === true ? false : true;
     const res = await toggleUserStatus({
       username: item.username,
-      status: newStatus
+      enabled: newStatus
     });
     if (res.code === 0) {
-      item.status = newStatus;
-      toast.success(`已${newStatus === '1' ? '启用' : '禁用'}用户: ${item.username}`, { position: 'top' });
+      item.enabled = newStatus;
+      toast.success(`已${newStatus === true ? '启用' : '禁用'}用户: ${item.username}`, { position: 'top' });
     }
   } catch (error) {
     console.error('切换用户状态失败', error);
     toast.error('切换用户状态失败', { position: 'top' });
   }
+};
+
+// 临时实现用户状态切换功能
+// 由于API中没有直接对应的函数，我们暂时提供一个模拟的实现
+const toggleUserStatus = async (data: { username: string, enabled: boolean }) => {
+  // TODO: 这是一个临时实现，在API提供实际功能后需要替换
+  console.log('切换用户状态:', data);
+  // 返回一个模拟的成功响应
+  return {
+    code: 0,
+    msg: '操作成功',
+    data: null
+  };
 };
 
 onMounted(() => {

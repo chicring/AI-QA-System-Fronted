@@ -67,52 +67,41 @@
         </div>
 
         <div>
-            <v-list>
-                <v-list-item v-for="item in response.data" :key="item.questionId">
+            <v-list v-if="response.records && response.records.length > 0">
+                <v-list-item rounded="md" v-for="item in response.records" :key="item.questionId" class="mb-2"
+                @click="item.question && item.question.categoryName && item.question.id && questionStore.setCategoryAndQuestion(item.question.categoryName, item.question.id)">
                     <v-list-item-title>
                         <div class="d-flex justify-space-between">
-                            <RouterLink 
-                                :to= "{
-                                    path: `/question/detail/${item.questionId}`,
-                                    query: {
-                                        categoryId: item.categoryId,
-                                    }
-                                }"
-                                class="text-decoration-none"
-                            >
-                                <span style="color: black;">{{ item.questionTitle }}</span>
-                            </RouterLink>
-                    
+                            <span class="text-body-1">{{ item.question?.questionTitle || '无标题' }}</span>
 
-                            <div class="d-flex flex-wrap ga-2 align-content-start">
-                                <v-chip v-for="tag in item.tagNames" :key="tag" variant="outlined" size="small" rounded="sm">
-                                    {{ tag }}
-                                </v-chip>
-                            </div>
+                            <TagChips :tags="item.question?.tagNames || []" />
                         </div>
                     </v-list-item-title>
 
                     <v-list-item-subtitle>
                         <div class="d-flex align-center justify-start ga-2">
-                            <span>{{ item.lastViewTime }}</span>
+                            <span>{{ item.updateTime || '-' }}</span>
 
                             <IconEye />
-                            <span>已刷题 {{ item.viewCount }} 次</span>
+                            <span>已刷题 {{ item.viewCount || 0 }} 次</span>
 
-                            <v-chip size="small" rounded="sm">
-                                {{ historyStatusItems.find(i => i.value === item.status)?.label }}
+                            <v-chip size="small" rounded="sm" >
+                                {{ historyStatusItems.find(i => i.value === item.status)?.label || '未知状态' }}
                             </v-chip>
                         </div>
                     </v-list-item-subtitle>
                 </v-list-item>
             </v-list>
+            <div v-else class="text-center pa-4">
+                <p>暂无刷题记录</p>
+            </div>
 
             <v-pagination
-              v-model="response.pageNum"
-              :length="Math.ceil(response.total / response.pageSize)"
+              v-model="response.pageNumber"
+              :length="response.pageSize > 0 ? Math.ceil(totalItemsCount / response.pageSize) : 0"
               class="my-4"
-              @next="jumpToPage(response.pageNum + 1)"
-              @prev="jumpToPage(response.pageNum - 1)"
+              @next="jumpToPage(response.pageNumber + 1)"
+              @prev="jumpToPage(response.pageNumber - 1)"
               @update:modelValue="handlePageChange"
             ></v-pagination>
         </div>
@@ -120,40 +109,70 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { getQueryHistory } from '@/api';
-import type { QueryHistoryRequest, QueryHistoryResponse } from '@/api/types/index';
+import { ref, onMounted, computed } from 'vue';
+import { getHistoryList } from '@/api';
+import type { HistoryListQueryParams, HistoryListResponse } from '@/api/types/history';
 import { historyStatusItems, difficultyItems } from '@/types/question';
 import { IconReload, IconEye,IconSearch } from '@tabler/icons-vue';
+import TagChips from '@/components/question/TagChips.vue';
+import { useQuestionStore } from '@/stores/question';
 
+const questionStore = useQuestionStore();
 
-const request = ref<QueryHistoryRequest>({
+const request = ref<HistoryListQueryParams>({
     pageNum: 1,
     pageSize: 10,
-    status: null,
-    q: null,
-    difficulty: null
+    status: undefined,
+    q: undefined,
+    difficulty: undefined
 })
 
-const response = ref<QueryHistoryResponse>({
-    pageNum: 0,
-    pageSize: 0,
-    total: 0,
-    data: [] 
+const response = ref<HistoryListResponse['data']>({
+    records: [],
+    pageNumber: 0,
+    pageSize: 10,
+    totalRow: 0,
+    totalPage: 0,
 })
+
+// 计算属性，提供总数据条数
+const totalItemsCount = computed(() => {
+  return response.value?.totalRow || 0;
+});
 
 const fetchHistory = async () => {
-    const res = await getQueryHistory(request.value)
-    response.value = res.data
+    try {
+        const res = await getHistoryList(request.value)
+        // 确保res.data存在且有效，否则使用默认值
+        if (res && res.data) {
+            response.value = {
+                records: Array.isArray(res.data.records) ? res.data.records : [],
+                pageNumber: res.data.pageNumber || 0,
+                pageSize: res.data.pageSize || 10,
+                totalRow: res.data.totalRow || 0,
+                totalPage: res.data.totalPage || 0,
+            }
+        }
+    } catch (error) {
+        console.error('获取历史记录失败:', error)
+        // 出错时重置为默认值
+        response.value = {
+            records: [],
+            pageNumber: 0,
+            pageSize: 10,
+            totalRow: 0,
+            totalPage: 0,
+        }
+    }
 }
 
 const reset = () => {
     request.value = {
         pageNum: 1,
         pageSize: 10,
-        status: null,
-        q: null,
-        difficulty: null
+        status: undefined,
+        q: undefined,
+        difficulty: undefined
     }
     fetchHistory()
 }

@@ -10,6 +10,7 @@ import type { ChatRequest } from '@/api/types/chat'
 import type { PerfectScrollbarExpose } from 'vue3-perfect-scrollbar';
 import InterviewerSelect from './components/InterviewerSelect.vue'
 import UploadButton from './components/UploadButton.vue'
+import Weclome from './components/Weclome.vue'  
 
 const chatStore = useChatStore()
 
@@ -96,8 +97,12 @@ onMounted(() => {
       <PerfectScrollbar key="message-list" class="scrollable-messages" id="message-list" ref="scrollbarApi" @ps-scroll-up="beginUp" @ps-scroll-down="rearchBottom" 
       >
         <div class="pa-4" :class='{"container": mdAndUp}'>
-          <!-- 这里放消息列表内容 -->
-          <div v-for="msg in chatStore.chat.messages"  class="mb-4">
+          <!-- 无消息时显示欢迎卡片 -->
+          <div v-if="chatStore.chat.messages.length === 0" class="welcome-card-container">
+            <Weclome />
+          </div>
+          <!-- 有消息时显示消息列表 -->
+          <div v-else v-for="msg in chatStore.chat.messages" class="mb-4">
             <MessageCard :key="msg.id" :message="msg" />
           </div>
         </div>
@@ -126,7 +131,6 @@ onMounted(() => {
             no-resize
             hide-details
             density="compact"
-            bg-color="#eef2f6"
             flat
             v-model="chatRequest.message"
             @keydown.enter.exact.prevent="sendMessage"
@@ -137,7 +141,7 @@ onMounted(() => {
         </v-textarea>
 
         <div class="d-flex justify-space-between">
-          <div>
+          <div class="d-flex align-end">
             <InterviewerSelect v-model:value="chatRequest.interviewer" />
           </div>
 
@@ -182,11 +186,11 @@ onMounted(() => {
 
 /* 输入框区域 固定在底部 并居中 左上角右上角圆润  内边距20px*/
 .chat-input {
-  background-color: #eef2f6; 
   margin-top: auto;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   padding: 10px;
+  border: 1px solid #e0e0e0;
 }
 
 /* 浮动按钮 相对父元素固定在底部右下角  内边距20px*/
@@ -203,9 +207,22 @@ onMounted(() => {
   z-index: 1;
 }
 
+/* 欢迎卡片容器样式 - 垂直居中 */
+.welcome-card-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 60vh;
+}
+
+
 @media (max-width: 960px) {
   .floating-button {
     right: 20px;
+  }
+  
+  .welcome-card {
+    max-width: 90%;
   }
 }
 

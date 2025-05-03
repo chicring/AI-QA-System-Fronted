@@ -112,9 +112,9 @@
 <script setup lang="ts">
 import { ref,onMounted } from 'vue';
 import { IconPencil } from '@tabler/icons-vue';
-import type { UpdateUserInfoRequest } from '@/api/types/user';
+import type { UpdateUserInfoRequest, UpdateUserInfoResponse } from '@/api';
 import { useUserStore } from '@/stores/user';
-import { updateUserInfo } from '@/api/user';
+import { updateUserInfo } from '@/api';
 import { useToast } from 'vue-toast-notification';
 
 const toast = useToast();
@@ -137,11 +137,11 @@ const options = ref({
 });
 
 const request = ref<UpdateUserInfoRequest>({
-    nickname: null,
-    email: null,
-    mobile: null,
-    sex: null,
-    avatar: null
+    nickname: undefined,
+    email: undefined,
+    mobile: undefined,
+    sex: undefined,
+    avatar: undefined
 });
 
 const rules = ref({
@@ -167,22 +167,22 @@ function submit() {
     if (!options.value.valid) {
         return;
     }
-    updateUserInfo(request.value).then((res) => {
+    updateUserInfo(request.value).then((res: UpdateUserInfoResponse) => {
         userStore.fetchUserInfo();
         options.value.showDialog = false;
         toast.success('修改成功', { position: 'top' });
-    }).catch((err) => {
+    }).catch((err: unknown) => {
         toast.error('修改失败', { position: 'top' });
     });
 }
 
 onMounted(() => {
     request.value = {
-        nickname: userStore.user.userInfo?.nickname || null,
-        email: userStore.user.userInfo?.email || null,
-        mobile: userStore.user.userInfo?.mobile || null,
-        sex: userStore.user.userInfo?.sex || null,
-        avatar: userStore.user.userInfo?.avatar || null
+        nickname: userStore.user.userInfo?.nickname || undefined,
+        email: userStore.user.userInfo?.email || undefined,
+        mobile: userStore.user.userInfo?.mobile || undefined,
+        sex: userStore.user.userInfo?.sex || undefined,
+        avatar: userStore.user.userInfo?.avatar || undefined
     }
 })
 </script>

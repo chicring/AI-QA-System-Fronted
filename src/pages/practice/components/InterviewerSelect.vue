@@ -18,6 +18,14 @@
     }"
     class="hide-select-arrow"
   >
+    <template #prepend-item>
+      <v-btn class="mb-2" block variant="text" rounded="md" active color="error"
+        @click="handleClearChat"
+      >
+        <IconTrash size="20" stroke="2"/>
+        清空对话
+      </v-btn>
+    </template>
 
     <template #selection="{ item }">
       <v-avatar size="small" class="mx-2">
@@ -47,8 +55,14 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import { IconTrash } from '@tabler/icons-vue';
+import { useConfirm } from 'vuetify-use-dialog';
+import { useChatStore } from '@/stores/chat';
 
-interface Interviewer {
+const chatStore = useChatStore();
+const createConfirm = useConfirm();
+
+interface Interviewer { 
   label: string;
   value: string;
   avatar: string;
@@ -95,6 +109,27 @@ const interviewers = ref<Interviewer[]>([
     avatar: 'https://cdn.linux.do/user_avatar/linux.do/chicring/96/305989_2.png'
   }
 ]);
+
+// 处理清空对话
+const handleClearChat = async () => {
+  const isConfirmed = await createConfirm({
+    title: '清空对话',
+    content: '确定要清空对话吗？',
+    confirmationText: '确定',
+    cancellationText: '取消',
+    dialogProps: {
+      maxWidth: 350,
+    },
+    cardProps: {
+      rounded: 'md',
+      elevation: 0,
+    },
+  });
+
+  if (isConfirmed) {
+    chatStore.clearMessages();
+  }
+};
 </script>
 
 <style scoped>

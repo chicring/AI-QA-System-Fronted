@@ -1,53 +1,69 @@
 <template>
   <div>
       <!-- 搜索 -->
-      <div class="d-flex align-start ga-2">
-          <v-select
-              :items="difficultyList"
-              item-title="name"
-              item-value="value"
-              v-model="params.difficulty"
-              @update:modelValue="fetchQuestions"
-              placeholder="难度"
-              variant="solo-filled"
-              flat
-              rounded="md"
-              chips
-              density="compact"
-          ></v-select>
+      <v-row dense>
+          <v-col cols="12" md="2">
+              <v-select
+                  v-model="params.difficulty"
+                  :items="difficultyList"
+                  item-title="name"
+                  item-value="value"
+                  variant="solo-filled"
+                  density="compact"
+                  rounded="md"
+                  flat
+                  placeholder="难度"
+                  hide-details
+                  chips
+                  @update:modelValue="fetchQuestions"
+                  :list-props="{
+                      nav: true,
+                      density: 'comfortable',
+                      rounded: 'md',
+                  }"
+                  clearable
+                ></v-select>
+          </v-col>
 
-          <TagSelect :model-value="params.tagNames" :list="tagList" @update:modelValue="fetchQuestions" />
+          <v-col cols="12" md="4">
+              <v-text-field
+                  placeholder="搜索题目"
+                  flat
+                  rounded="md"
+                  variant="solo-filled"
+                  density="compact"
+                  v-model="params.title"
+                  hide-details
+                  @update:modelValue="fetchQuestions"
+              >
+                  <template #prepend-inner>
+                      <IconSearch class="text-medium-emphasis" />
+                  </template>
+              </v-text-field>
+          </v-col>
 
-          <v-text-field
-              placeholder="搜索题目"
-              flat
-              rounded="md"
-              variant="solo-filled"
-              density="compact"
-              v-model="params.title"
-              @update:modelValue="fetchQuestions"
-          >
-              <template #prepend-inner>
-                  <IconSearch class="text-medium-emphasis" />
-              </template>
-          </v-text-field>
+          <v-col cols="12" md="5">
+              <TagsSelect v-model:tagNames="selectedTags" @update:tagNames="updateTags" :list="tagList" />
+          </v-col>
 
-          <!-- 重置 -->
-          <v-btn class="text-medium-emphasis" rounded="md" variant="tonal" @click="resetFilters"> <IconReload   /></v-btn>
+          <v-col cols="12" md="1">
+            <v-btn class="text-medium-emphasis mr-2" rounded="md" variant="tonal" @click="resetFilters"> <IconReload /></v-btn>
+          </v-col>
+      </v-row>
+      <div class="d-flex ga-2 mt-2 justify-end">
+        <!-- 重置 -->
 
-          <QuestionCreateDialog @save="handleQuestionCreated" />
-          <QuestionImportDialog @import-success="handleQuestionCreated" />
-        
+        <QuestionCreateDialog @save="handleQuestionCreated" />
+        <QuestionImportDialog @import-success="handleQuestionCreated" />
       </div>
 
-      <div class="d-flex ga-2">
+      <div class="d-flex ga-2 mt-2">
           <v-chip
               v-for="tag in params.tagNames"
               :key="tag"
               closable
               size="small"
               @click:close="handleTagClick(tag)"
-              
           >
               {{ tag }}
           </v-chip>
@@ -56,8 +72,8 @@
       <!-- 表格 -->
       <div>
           <v-data-table-server
-              :items-length="questionList.total"
-              :items="questionList.data"
+              :items-length="totalItemsCount"
+              :items="questionList.records"
               :headers="questionHeaders"
               v-model:items-per-page="params.pageSize"
               v-model:page="params.pageNum"
@@ -93,33 +109,27 @@
                   <DifficultyChip :difficulty="value" />
               </template>
               <template #item.tagNames="{ value }">
-                  <div class="d-flex flex-wrap ga-2 align-content-start">
-                      <v-chip v-for="tag in value" :key="tag" variant="outlined" size="small" rounded="sm">
-                          {{ tag }}
-                      </v-chip>
-                  </div>
+                  <TagChips :tags="value" />
               </template>
               <template #item.viewCount="{ value }">
-                  <div class="text-body-1 d-flex  align-center text-medium-emphasis" >
-                      <IconFlame :size="20"></IconFlame>
-                      <span>{{ value}}</span>
-                  </div>
+                  <FlameChip :value="value" />
               </template>
 
               <template #item.action="{item}">
                 <div class="d-flex ga-2">
                   <v-btn color="primary" variant="flat" size="small" class="action-button"
                       rounded="md"
-                      @click="openQuestionDetail(item.questionId)"
+                      @click="openQuestionDetail(item.id)"
                   >
                     <IconEye></IconEye>查看
                   </v-btn>
                   <v-btn color="warning" variant="flat" size="small" class="action-button"
                       rounded="md"
+                      @click="openQuestionEdit(item.id)"
                   >
                     <IconPencil></IconPencil>编辑
                   </v-btn>
-                  <ConfirmButton title="提示" content="确定要删除题目吗？" @confirm="handleDeleteQuestion(item.questionId as number)" color="error" variant="flat" size="small" rounded="md">
+                  <ConfirmButton title="提示" content="确定要删除题目吗？" @confirm="handleDeleteQuestion(item.id)" color="error" variant="flat" size="small" rounded="md">
                     <IconTrash></IconTrash>删除
                   </ConfirmButton>
                 </div>
@@ -132,50 +142,80 @@
         v-model:dialog="questionDetailDialog"
         :question-id="selectedQuestionId"
       />
+      
+      <!-- 编辑题目对话框 -->
+      <QuestionEditDialog
+        v-model:dialog="questionEditDialog"
+        :question-id="selectedQuestionId"
+        @save="handleQuestionUpdated"
+      />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref,onMounted } from 'vue';
+import { ref,onMounted, computed } from 'vue';
 import { IconSettings, IconSearch, IconReload,IconFlame  } from '@tabler/icons-vue';
-import { deleteQuestion, getQuestionList, getTagListGroup } from '@/api'; 
-import type { QuestionListQueryParams, QuestionListResponse, QuestionItem, TagGroup } from '@/api/types/index';
+import { deleteQuestion, getQuestionList, getAllTags } from '@/api'; 
+import type { QuestionListRequest, QuestionListResponse, QuestionItem, TagItem, PaginatedData } from '@/api';
 import { difficultyList } from '@/types/question/DifficultyType';
-import TagSelect from '@/components/question/TagSelect.vue';
+import TagsSelect from '@/pages/admin/question-bank/components/select/TagsSelect.vue';
 import { questionHeaders } from './header';
-import DifficultyChip from '@/components/question/difficultyChip.vue';
+import DifficultyChip from '@/components/question/DifficultyChip.vue';
 import {IconEye, IconPencil,IconTrash} from '@tabler/icons-vue'
 import QuestionCreateDialog from './dialog/QuestionCreateDialog.vue';
 import QuestionImportDialog from './dialog/QuestionImportDialog.vue';
 import QuestionDialog from './dialog/QuestionDialog.vue';
+import QuestionEditDialog from './dialog/QuestionEditDialog.vue';
 import ConfirmButton from '@/components/shared/ConfirmButton.vue';
 import { useToast } from 'vue-toast-notification';
+import TagChips from '@/components/question/TagChips.vue';
+import FlameChip from '@/components/question/FlameChip.vue';
 
 const toast = useToast();
 // 查询参数
-const params = ref<QuestionListQueryParams>({
+const params = ref<QuestionListRequest>({
   pageNum: 1,
   pageSize: 10,
-  categoryId: null,
-  title: null,
-  difficulty: null,
+  categoryId: undefined,
+  title: undefined,
+  difficulty: undefined,
   tagNames: [] as string[],
 })
 
-// 问题列表数据
-const questionList = ref<QuestionListResponse>({
-pageNum: 1,
-pageSize: 10,
-total: 0,
-data: [] as QuestionItem[]
+// 处理tagNames的计算属性，确保永远返回非空数组
+const selectedTags = computed({
+  get: () => params.value.tagNames || [],
+  set: (val: string[]) => {
+    params.value.tagNames = val;
+  }
 });
 
-const tagList = ref<TagGroup[]>([]);
+// 更新标签并触发查询
+const updateTags = (tags: string[]) => {
+  params.value.tagNames = tags;
+  fetchQuestions();
+};
+
+// 问题列表数据
+const questionList = ref<PaginatedData<QuestionItem>>({
+  records: [] as QuestionItem[],
+  totalRow: 0,
+  totalPage: 0,
+  pageNumber: 1,
+  pageSize: 10
+});
+
+const tagList = ref<TagItem[]>([]);
 const loading = ref(false)
+
+// 计算属性，提供总数据条数
+const totalItemsCount = computed(() => {
+  return questionList.value?.totalRow || 0;
+})
 
 const fetchTagListGroup = async () => {
 try {
-  const res = await getTagListGroup();
+  const res = await getAllTags();
   tagList.value = res.data;
 } catch (error) {
   console.error('获取标签列表失败:', error);
@@ -199,7 +239,9 @@ const fetchQuestions = async (options?: any) => {
       params.value.pageSize = options.itemsPerPage
     }
     const res = await getQuestionList(params.value);
-    questionList.value = res.data;
+    if (res.code === 200 && res.data) {
+      questionList.value = res.data;
+    }
   } catch (error) {
     console.error('获取问题列表失败:', error);
   } finally {
@@ -223,9 +265,9 @@ const resetFilters = () => {
 params.value = {
   pageNum: 1,
   pageSize: 10, // 保留当前的每页条数
-  categoryId: null,
-  title: null,
-  difficulty: null,
+  categoryId: undefined,
+  title: undefined,
+  difficulty: undefined,
   tagNames: [] as string[]
 };
 fetchQuestions();
@@ -238,12 +280,25 @@ const handleQuestionCreated = () => {
 
 // 题目详情弹窗状态
 const questionDetailDialog = ref(false);
+const questionEditDialog = ref(false);
 const selectedQuestionId = ref<number>(0);
 
 // 打开题目详情
 const openQuestionDetail = (questionId: number) => {
   selectedQuestionId.value = questionId;
   questionDetailDialog.value = true;
+};
+
+// 打开题目编辑
+const openQuestionEdit = (questionId: number) => {
+  selectedQuestionId.value = questionId;
+  questionEditDialog.value = true;
+};
+
+// 处理问题更新成功
+const handleQuestionUpdated = () => {
+  toast.success('题目更新成功', {position:'top'});
+  fetchQuestions(); // 刷新问题列表
 };
 
 onMounted(() => {

@@ -1,50 +1,64 @@
-// 通知项类型
-export interface NotificationItem {
-    id: number;
-    title: string;
-    content: string;
-    type: number;
-    status: number;
-    createTime: Date;
-    username?: string;
-    avatar?: string;
+import type { ApiResponse, PaginatedData, BasePageParams } from './common';
+
+/**
+ * 通知项基本结构
+ */
+export interface NoticeItem {
+  id: number;
+  title: string;
+  content: string;
+  type: number; // 1:系统通知 2:其它通知
+  status: number; // 1:未读 2:已读
+  avatar: string;
+  username: string;
+  createTime: string;
 }
 
-// 通知列表响应
-export interface NotificationListResponse {
-    pageNum: number;
-    pageSize: number;
-    total: number;
-    data: NotificationItem[];
+/**
+ * `/v1/notice/list` 和 `/v1/notice/admin/page` (GET) 请求查询参数类型
+ */
+export interface NoticeListQueryParams extends BasePageParams {
+  status?: number;
+  type?: number;
 }
 
-// 通知查询参数
-export interface QueryNotificationVO {
-    pageNum: number;
-    pageSize: number;
-    status: number | null;
-    type: number | null;
+/**
+ * `/v1/notice/list` 和 `/v1/notice/admin/page` (GET) 响应类型
+ */
+export type NoticeListResponse = ApiResponse<PaginatedData<NoticeItem>>;
+
+/**
+ * `/v1/notice/mark-all-read` (PUT) 响应类型
+ */
+export type MarkAllReadResponse = ApiResponse<string>;
+
+/**
+ * `/v1/notice/{id}` (DELETE) 响应类型
+ */
+export type DeleteNoticeResponse = ApiResponse<string>;
+
+/**
+ * `/v1/notice/status/{id}` (GET) 请求查询参数类型
+ */
+export interface UpdateNoticeStatusParams {
+  status: number;
 }
 
-// 管理端通知查询参数
-export interface AdminNotificationQueryVO {
-    pageNum?: number;
-    pageSize?: number;
-    status?: number | null;
-    type?: number | null;
+/**
+ * `/v1/notice/status/{id}` (GET) 响应类型
+ */
+export type UpdateNoticeStatusResponse = ApiResponse<string>;
+
+/**
+ * `/v1/notice/admin/send` (POST) 请求体类型
+ */
+export interface SendNoticeRequest {
+  title: string;
+  content: string;
+  username: string;
 }
 
-// 管理端通知响应
-export interface AdminNotificationResponse {
-    pageNum: number;
-    pageSize: number;
-    total: number;
-    data: NotificationItem[];
-} 
-
-//  发送通知请求
-export interface SendNotificationRequest {
-    title: string;
-    content: string;
-    username: string;
-}
+/**
+ * `/v1/notice/admin/send` (POST) 响应类型
+ */
+export type SendNoticeResponse = ApiResponse<string>; 

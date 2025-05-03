@@ -5,9 +5,9 @@ interface HistoryStatus {
 }
 
 const historyStatusItems: HistoryStatus[] = [
-    { label: '看过', value: 1 },
-    { label: '已掌握', value: 2 },
-    { label: '待复习', value: 3 },
+    { label: '看过', value: 0 },
+    { label: '已掌握', value: 1 },
+    { label: '待复习', value: 2 },
 ]
 
 type DifficultyType = {
@@ -31,9 +31,9 @@ interface ToggleStatusItem {
 }
 // 1:看过 2:已掌握 3:待复习
 const toggleStatusItems: ToggleStatusItem[] = [
-    { label: '看过', value: 1, icon: 'star', color: '#FFA000' },
-    { label: '已掌握', value: 2, icon: 'flag', color: '#E64A19' },
-    { label: '待复习', value: 3, icon: 'flag', color: '#E64A19' },
+    { label: '看过', value: 0, icon: 'star', color: '#FFA000' },
+    { label: '已掌握', value: 1, icon: 'flag', color: '#E64A19' },
+    { label: '待复习', value: 2, icon: 'flag', color: '#E64A19' },
 ]
 
 export type { HistoryStatus, DifficultyType, ToggleStatusItem };
