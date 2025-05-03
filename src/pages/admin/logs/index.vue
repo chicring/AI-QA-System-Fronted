@@ -101,10 +101,7 @@
           </v-chip>
         </template>
       </v-data-table-server>
-
     </v-card>
-
-    
   </div>
 </template>
 
