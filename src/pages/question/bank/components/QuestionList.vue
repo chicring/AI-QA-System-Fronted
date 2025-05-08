@@ -138,7 +138,7 @@ const props = defineProps<{
 
 const request = ref<QuestionListRequest>({
     pageNum: 1,
-    pageSize: 10,
+    pageSize: 20,
     categoryName: props.categoryName,
     title: undefined,
     difficulty: undefined,
@@ -150,7 +150,7 @@ const response = ref<PaginatedData<QuestionItem>>({
     totalRow: 0,
     totalPage: 0,
     pageNumber: 1,
-    pageSize: 10
+    pageSize: 20
 });
 
 // 存储所有已加载的记录

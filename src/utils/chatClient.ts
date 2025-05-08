@@ -97,6 +97,8 @@ class ChatClient {
                         
                         // 如果响应结束，返回最终结果
                         if (chatResponse.finishReason === "STOP") {
+                            const responseContent = chatResponse.content 
+                            onData(responseContent)
                             onResponse(finalResult)
                             return
                         }

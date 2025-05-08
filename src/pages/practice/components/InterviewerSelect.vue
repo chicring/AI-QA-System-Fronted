@@ -99,12 +99,12 @@ const selectedInterviewer = computed({
 
 const interviewers = ref<Interviewer[]>([
   {
-    label: '张三',
+    label: '模拟练习',
     value: 'zhangsan',
     avatar: 'https://cdn.linux.do/user_avatar/linux.do/chicring/96/305989_2.png'
   },
   {
-    label: '李四',
+    label: '题库问答',
     value: 'lisi',
     avatar: 'https://cdn.linux.do/user_avatar/linux.do/chicring/96/305989_2.png'
   }

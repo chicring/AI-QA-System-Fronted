@@ -122,7 +122,7 @@ onBeforeUnmount(() => {
       </v-card-item>
       <v-divider />
       <div v-if="notificationList.length > 0">
-        <v-list-item v-for="(item, i) in notificationList" :key="i" lines="two" class="mb-1">
+        <v-list-item v-for="(item, i) in notificationList" :key="item.id" lines="two" class="mb-1">
           <template #prepend>
             <v-avatar rounded>
               <component :is="getNotificationIcon(item.type)" stroke-width="2" size="24" />

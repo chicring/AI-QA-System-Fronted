@@ -1,8 +1,5 @@
 const MainRoutes = {
   path: '/',
-  meta: {
-    requiresAuth: false
-  },
   component: () => import('@/layouts/full/FullLayout.vue'),
   children: [
     {
@@ -37,6 +34,16 @@ const MainRoutes = {
       name: 'QuestionBank',
       props: true,
       component: () => import('@/pages/question/bank/[id].vue'),
+      meta: {
+        keepAlive: false,
+        requireAuth: false,
+      }
+    },
+    {
+      path: 'question/detail/:id',
+      name: 'QuestionDetailById',
+      props: true,
+      component: () => import('@/pages/question/detail/[id].vue'),
       meta: {
         keepAlive: false,
         requireAuth: false,

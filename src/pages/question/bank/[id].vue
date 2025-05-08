@@ -3,7 +3,7 @@
         <v-row>
             <v-col cols="12" md="4" >
                 <v-card flat>
-                    <v-img rounded="md" :src="categoryDetail.imageUrl" height="180px" cover>
+                    <v-img rounded="md" :src="categoryDetail.imageUrl" height="220px" cover>
                     </v-img>
 
                     <v-card-title>{{ categoryDetail.categoryName }}</v-card-title>

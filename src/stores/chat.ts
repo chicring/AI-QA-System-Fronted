@@ -36,7 +36,6 @@ export const useChatStore = defineStore('chat', () => {
         chatClient.post(request, (data) => {
             const msg = chat.value.messages.find(m => m.id === reply.id)
             if(msg) {
-                // 确保content和data都是字符串类型
                 msg.content = String(msg.content) + String(data)
             }else {
                 reply.content = String(data)

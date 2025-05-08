@@ -82,7 +82,7 @@ interface SystemSettings {
 }
 
 const settings = ref<SystemSettings>({
-  systemName: '在线考试系统',
+  systemName: 'AI题库系统',
   version: 'v1.0.0',
   adminEmail: 'admin@example.com',
   allowRegistration: true,

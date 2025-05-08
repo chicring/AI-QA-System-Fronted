@@ -93,7 +93,7 @@
       </v-row>
       <p class="text-body-2 text-medium-emphasis">
         在下方输入框中输入您的问题，然后按回车键发送<br>
-        您也可以选择不同的面试官或上传文档进行对话
+        您也可以选择不同的助手或上传文档进行对话
       </p>
     </v-card-text>
   </v-card>
